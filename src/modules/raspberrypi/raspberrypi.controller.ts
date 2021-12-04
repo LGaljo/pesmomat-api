@@ -14,7 +14,7 @@ export class RaspberrypiController {
       throw new BadRequestException('Missing songs ID');
     }
 
-    await this.raspberryService.printSong(context, query.songId);
+    return await this.raspberryService.printSong(context, query.songId);
   }
 
   @Post('scrape/:page')

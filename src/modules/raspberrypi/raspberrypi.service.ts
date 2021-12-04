@@ -5,23 +5,43 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 import { scrape } from '../../lib/scraper';
 import { SongsService } from '../songs/songs.service';
 import { printPDF } from '../../lib/print';
+import { TokensService } from '../tokens/tokens.service';
 
 @Injectable()
 export class RaspberrypiService {
   private readonly logger = new Logger(RaspberrypiService.name);
 
-  constructor(private songsService: SongsService) {}
+  constructor(
+    private songsService: SongsService,
+    private tokensService: TokensService,
+  ) {}
 
-  async printSong(context: Context, songId: string): Promise<void> {
+  async printSong(context: Context, songId: string): Promise<any> {
+    // Check for credits
+    const availablePrints = await this.tokensService.getValue();
+
+    if (availablePrints.amount <= 0) {
+      return { message: 'Insufficient funds' };
+      // throw new BadRequestException('Insufficient funds');
+    }
+
     // Get songs
     const song = await this.songsService.findOne(songId);
+
+    if (!song) {
+      return { message: 'Song does not exist' };
+    }
 
     // Create PDF
     const path = await createPDF(song);
 
+    // Decrease available prints
+    await this.tokensService.set(-1);
+
     // Print PDF
-    await printPDF(path);
+    // await printPDF(path);
     console.log('Now printing!');
+    return { message: 'Printing' };
   }
 
   @Cron(CronExpression.EVERY_10_MINUTES)

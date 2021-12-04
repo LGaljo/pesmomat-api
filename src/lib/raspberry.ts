@@ -15,6 +15,6 @@ export function raspberry() {
 
     setTimeout(() => {
       console.log('test');
-    }, 100000);
+    }, 1000);
   }
 }

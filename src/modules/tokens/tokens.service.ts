@@ -1,19 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleInit } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Token, TokenDocument } from './tokens.schema';
+import { Gpio } from 'onoff';
+import { response } from 'express';
 
 @Injectable()
-export class TokensService {
+export class TokensService implements OnModuleInit {
   constructor(
     @InjectModel(Token.name) private tokensModel: Model<TokenDocument>,
   ) {}
 
-  async setOne(): Promise<TokenDocument> {
+  async set(value: number): Promise<any> {
     if (await this.exists()) {
-      this.tokensModel.updateMany({}, { $inc: { amount: 1 } });
+      console.log('update');
+      const response = await this.tokensModel
+        .updateMany({ only: 1 }, { $inc: { amount: value } })
+        .exec();
+    } else {
+      console.log('create');
+      await this.tokensModel.create({ amount: value });
     }
-    return await this.tokensModel.create({ amount: 1 });
+    return response;
+  }
+
+  async setOne(): Promise<TokenDocument> {
+    return await this.set(1);
   }
 
   async getValue(): Promise<any> {
@@ -24,5 +36,26 @@ export class TokensService {
   async exists(): Promise<boolean> {
     const obj = await this.tokensModel.findOne({ only: 1 }).exec();
     return !!obj?._id;
+  }
+
+  async setWatch(): Promise<any> {
+    if (!Gpio.accessible) {
+      console.log('Gpio not available');
+      return;
+    }
+
+    const button = new Gpio(23, 'in', 'rising', { debounceTimeout: 100 });
+
+    button.watch(async (err, value) => {
+      if (err) {
+        console.error(err);
+      }
+      console.log(value);
+      await this.setOne();
+    });
+  }
+
+  async onModuleInit(): Promise<any> {
+    await this.setWatch();
   }
 }

@@ -1,5 +1,12 @@
-import { Controller, Get, Post, Req } from '@nestjs/common';
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { TokensService } from './tokens.service';
+import { IRequest } from '../../middlewares/context.middleware';
 
 @Controller('tokens')
 export class TokensController {
@@ -11,7 +18,12 @@ export class TokensController {
   }
 
   @Post()
-  public async setAmount(): Promise<any> {
-    return this.tokensService.setOne();
+  public async setAmount(@Req() request: IRequest): Promise<any> {
+    const { query } = request;
+
+    if (!query?.value) {
+      throw new BadRequestException('Missing value parameter');
+    }
+    return this.tokensService.set(Number(query?.value));
   }
 }
