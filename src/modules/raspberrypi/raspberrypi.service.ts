@@ -4,6 +4,7 @@ import { createPDF } from '../../lib/pdf';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { scrape } from '../../lib/scraper';
 import { SongsService } from '../songs/songs.service';
+import { printPDF } from '../../lib/print';
 
 @Injectable()
 export class RaspberrypiService {
@@ -13,13 +14,13 @@ export class RaspberrypiService {
 
   async printSong(context: Context, songId: string): Promise<void> {
     // Get songs
-    const song = this.songsService.findOne(songId);
+    const song = await this.songsService.findOne(songId);
 
     // Create PDF
     const path = await createPDF(song);
 
     // Print PDF
-    // await printPDF(path);
+    await printPDF(path);
     console.log('Now printing!');
   }
 

@@ -1,12 +1,20 @@
-import { env } from '../config/env';
-
-import piblaster from 'pi-blaster.js';
-import chalk from 'chalk';
 import { Gpio } from 'onoff';
 
-const LOW = Gpio.LOW;
-const HIGH = Gpio.HIGH;
+export function raspberry() {
+  if (Gpio.accessible) {
+    const button = new Gpio(23, 'in', 'rising', { debounceTimeout: 100 });
 
-let doors;
-let other;
+    button.watch((err, value) => {
+      if (err) {
+        console.error(err);
+      }
+      console.log(value);
+    });
+  } else {
+    console.log('Gpio not available');
 
+    setTimeout(() => {
+      console.log('test');
+    }, 100000);
+  }
+}

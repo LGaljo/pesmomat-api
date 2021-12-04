@@ -4,9 +4,6 @@ export type SongDocument = Song & Document;
 
 @Schema()
 export class Song {
-  @Prop({ unique: true })
-  songId: string;
-
   @Prop()
   title: string;
 
@@ -19,10 +16,10 @@ export class Song {
   @Prop()
   url: string;
 
-  @Prop()
+  @Prop({ default: new Date() })
   createdAt: Date;
 
-  @Prop()
+  @Prop({ default: new Date() })
   published: Date;
 }
 

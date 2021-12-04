@@ -1,4 +1,4 @@
-import { Controller, Get, Req } from '@nestjs/common';
+import { Controller, Get, Post, Req } from "@nestjs/common";
 import { SongsService } from './songs.service';
 import { IRequest } from '../../middlewares/context.middleware';
 
@@ -20,5 +20,11 @@ export class SongsController {
   public async getSong(@Req() request: IRequest): Promise<any> {
     const { params } = request;
     return this.songsService.findOne(params?.id);
+  }
+
+  @Post()
+  public async createSong(@Req() request: IRequest): Promise<any> {
+    const { body } = request;
+    return this.songsService.create(body);
   }
 }

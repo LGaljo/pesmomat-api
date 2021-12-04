@@ -29,7 +29,7 @@ export async function createPDF(song: any): Promise<string> {
   // Read HTML Template
   console.log(path.resolve('dist', 'templates', 'song.html'));
   const html = fs.readFileSync(
-    path.resolve('dist', 'templates', 'songs.html'),
+    path.resolve('dist', 'templates', 'song.html'),
     'utf8',
   );
 
@@ -37,15 +37,9 @@ export async function createPDF(song: any): Promise<string> {
   const document = {
     html,
     data: {
-      title: song?.title || 'Štiri pesmi',
-      author: song?.author || 'Maja Miloševič Čustić',
-      content:
-        song?.content ||
-        'Oče je palični mešalnik.<br>' +
-          'Šit, spet so se naredile grudice,<br>' +
-          'nisem bila pozorna.<br>' +
-          'Velike so, mastne in debele.<br>' +
-          'Moj jezik je govorica grudic.',
+      title: song?.title,
+      author: song?.author,
+      content: song?.content,
     },
     path: filename,
     type: '', // By default a file is created but you could switch between Buffer and Streams by using "buffer" or "stream" respectively.

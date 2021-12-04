@@ -12,6 +12,7 @@ import { RaspberrypiModule } from './modules/raspberrypi/raspberrypi.module';
 import { env } from './config/env';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SongsModule } from './modules/songs/songs.module';
+import { TokensModule } from './modules/tokens/tokens.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { SongsModule } from './modules/songs/songs.module';
     SongsModule,
     RaspberrypiModule,
     ScheduleModule.forRoot(),
+    TokensModule,
   ],
   controllers: [AppController],
   providers: [AppService],

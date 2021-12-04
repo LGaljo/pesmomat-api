@@ -3,6 +3,8 @@ import { AppModule } from './app.module';
 import * as helmet from 'helmet';
 import { env } from './config/env';
 
+import * as raspberry from './lib/raspberry';
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     cors: {
@@ -14,6 +16,8 @@ async function bootstrap() {
   });
   app.enableCors();
   app.use(helmet());
+
+  raspberry.raspberry();
 
   await app.listen(env.API_PORT, env.API_HOST);
   console.log(`API server listening on ${env.API_HOST}:${env.API_PORT}`);
