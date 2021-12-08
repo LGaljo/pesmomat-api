@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Req } from "@nestjs/common";
+import { BadRequestException, Controller, Get, Post, Req } from "@nestjs/common";
 import { SongsService } from './songs.service';
 import { IRequest } from '../../middlewares/context.middleware';
 
@@ -26,5 +26,16 @@ export class SongsController {
   public async createSong(@Req() request: IRequest): Promise<any> {
     const { body } = request;
     return this.songsService.create(body);
+  }
+
+  @Post('tts')
+  public async createTTS(@Req() request: IRequest): Promise<any> {
+    const { body } = request;
+
+    if (!body?.text) {
+      throw new BadRequestException('Missing text field in body');
+    }
+
+    return await this.songsService.tts(body.text);
   }
 }

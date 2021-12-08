@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Song, SongDocument } from './songs.schema';
 import { InjectModel } from '@nestjs/mongoose';
+import { synthesizeSpeech } from '../../lib/tts';
 
 @Injectable()
 export class SongsService {
@@ -24,5 +25,9 @@ export class SongsService {
   async exists(songId: string): Promise<boolean> {
     const obj = await this.songModel.findOne({ songId }).exec();
     return !!obj?._id;
+  }
+
+  async tts(text: string, options?: any) {
+    return await synthesizeSpeech(text, options);
   }
 }
