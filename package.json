@@ -30,7 +30,7 @@
     "dotenv": "^10.0.0",
     "helmet": "^4.6.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.19.0",
-    "mongoose": "^6.0.14",
+    "mongoose": "^6.1.0",
     "onoff": "^6.0.3",
     "pdf-creator-node": "^2.2.4",
     "pdf-to-printer": "^5.1.1",

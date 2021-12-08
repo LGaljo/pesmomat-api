@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, ObjectId } from 'mongoose';
 import { Song, SongDocument } from './songs.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { synthesizeSpeech } from '../../lib/tts';
@@ -27,7 +27,13 @@ export class SongsService {
     return !!obj?._id;
   }
 
-  async tts(text: string, options?: any) {
-    return await synthesizeSpeech(text, options);
+  async tts(text: string, songId: string) {
+    if (songId) {
+      const song = await this.findOne(songId);
+      text = song.content;
+    }
+    return await synthesizeSpeech(text.replace(/<br>/g, ', '), {
+      filename: `song_${songId}.mp3`,
+    });
   }
 }

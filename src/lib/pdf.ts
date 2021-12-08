@@ -33,7 +33,7 @@ export async function createPDF(song: any): Promise<string> {
     'utf8',
   );
 
-  const filename = `./songs/song_${song._id}.pdf`;
+  const filename = `./assets/pdf/song_${song._id}.pdf`;
   const document = {
     html,
     data: {
@@ -45,9 +45,7 @@ export async function createPDF(song: any): Promise<string> {
     type: '', // By default a file is created but you could switch between Buffer and Streams by using "buffer" or "stream" respectively.
   };
 
-  const response = await pdf.create(document, options);
-
-  console.log(response);
+  await pdf.create(document, options);
 
   return filename;
 }

@@ -1,6 +1,18 @@
-import { BadRequestException, Controller, Get, Post, Req } from "@nestjs/common";
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  NotFoundException,
+  Post,
+  Req,
+  Res,
+  StreamableFile,
+} from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { IRequest } from '../../middlewares/context.middleware';
+import { createReadStream } from 'fs';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @Controller('songs')
 export class SongsController {
@@ -22,20 +34,45 @@ export class SongsController {
     return this.songsService.findOne(params?.id);
   }
 
+  @Get('play/:id')
+  public async getSongFile(
+    @Req() request: IRequest,
+    @Res({ passthrough: true }) res,
+  ): Promise<StreamableFile> {
+    const { params } = request;
+
+    const fp = path.join(process.cwd(), `assets/mp3/song_${params.id}.mp3`);
+    if (!fs.existsSync(fp)) {
+      console.log('Create tts sample');
+      if (await this.songsService.exists(params.id)) {
+        await this.songsService.tts(null, params.id);
+      }
+    }
+
+    const file = createReadStream(fp);
+
+    res.set({
+      'Content-Type': 'audio/mpeg',
+      'Content-Disposition': 'attachment; filename="audio.mp3"',
+    });
+
+    return new StreamableFile(file);
+  }
+
   @Post()
   public async createSong(@Req() request: IRequest): Promise<any> {
     const { body } = request;
     return this.songsService.create(body);
   }
 
-  @Post('tts')
+  @Post(['tts', 'tts/:id'])
   public async createTTS(@Req() request: IRequest): Promise<any> {
-    const { body } = request;
+    const { body, params } = request;
 
     if (!body?.text) {
       throw new BadRequestException('Missing text field in body');
     }
 
-    return await this.songsService.tts(body.text);
+    return await this.songsService.tts(body.text, params?.id);
   }
 }

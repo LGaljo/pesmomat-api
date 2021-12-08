@@ -14,9 +14,12 @@ export async function synthesizeSpeech(text: any, options?: any) {
   speechConfig.speechSynthesisOutputFormat =
     SpeechSynthesisOutputFormat.Audio48Khz192KBitRateMonoMp3;
   speechConfig.speechSynthesisLanguage = 'sl-SI';
-  speechConfig.speechSynthesisVoiceName = 'sl-SI-RokNeural'; // ali 'sl-SI-PetraNeural'
+  speechConfig.speechSynthesisVoiceName =
+    options?.voice === 'female' ? 'sl-SI-PetraNeural' : 'sl-SI-RokNeural';
 
-  const audioConfig = AudioConfig.fromAudioFileOutput('output.mp3');
+  const audioConfig = AudioConfig.fromAudioFileOutput(
+    'assets/mp3/' + options?.filename || 'assets/mp3/output.mp3',
+  );
 
   const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
   synthesizer.speakTextAsync(
