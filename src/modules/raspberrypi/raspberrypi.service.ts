@@ -44,7 +44,7 @@ export class RaspberrypiService {
     return { message: 'Printing' };
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  // @Cron(CronExpression.EVERY_10_MINUTES)
   async scrapeSongs(): Promise<void> {
     this.scrapePage();
   }
