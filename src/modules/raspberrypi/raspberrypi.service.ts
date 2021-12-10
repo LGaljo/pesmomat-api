@@ -39,7 +39,7 @@ export class RaspberrypiService {
     await this.tokensService.set(-1);
 
     // Print PDF
-    // await printPDF(path);
+    await printPDF(path);
     console.log('Now printing!');
     return { message: 'Printing' };
   }
