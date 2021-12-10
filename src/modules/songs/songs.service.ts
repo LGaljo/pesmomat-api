@@ -32,7 +32,14 @@ export class SongsService {
       const song = await this.findOne(songId);
       text = song.content;
     }
-    return await synthesizeSpeech(text.replace(/<br>/g, ', '), {
+    text = text.replace(/<br>/g, ', ');
+    text = text.replace(/[óòô]/g, 'o');
+    text = text.replace(/[eèéêə]/g, 'e');
+    text = text.replace(/[ìí]/g, 'i');
+    text = text.replace(/[àá]/g, 'a');
+    text = text.replace(/[úù]/g, 'u');
+
+    return await synthesizeSpeech(text, {
       filename: `song_${songId}.mp3`,
     });
   }
