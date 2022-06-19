@@ -16,11 +16,4 @@ export class RaspberrypiController {
 
     return await this.raspberryService.printSong(context, query.songId);
   }
-
-  @Post('scrape/:page')
-  async scrapeSongsFromVrabecAnarhist(@Req() req: IRequest) {
-    const { params } = req;
-
-    await this.raspberryService.scrapePage(Number(params.page));
-  }
 }
