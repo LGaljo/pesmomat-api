@@ -1,10 +1,20 @@
-import * as print_win from 'pdf-to-printer';
-import * as print_unix from 'unix-print';
+import { SerialPort } from 'serialport';
+import { Printer } from 'thermalprinter';
+import { Song } from '../modules/songs/songs.schema';
 
-export async function printPDF(path: string) {
-  if (process.platform === 'win32') {
-    print_win.print(path).then(console.log);
-  } else if (process.platform === 'linux') {
-    print_unix.print(path).then(console.log);
-  }
+export async function printOnThermalPaper(song: Song) {
+  const serialport = new SerialPort({ path: '/dev/ttyUSB0', baudRate: 9600 });
+
+  serialport.on('open', function () {
+    const printer = new Printer(serialport);
+    printer.on('ready', function () {
+      song.content.split('\n').map((line: string) => {
+        printer.printLine(line);
+      });
+      printer.print(function () {
+        console.log('done');
+        process.exit();
+      });
+    });
+  });
 }
