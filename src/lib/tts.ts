@@ -18,7 +18,7 @@ export async function synthesizeSpeech(text: any, options?: any) {
     options?.voice === 'female' ? 'sl-SI-PetraNeural' : 'sl-SI-RokNeural';
 
   const audioConfig = AudioConfig.fromAudioFileOutput(
-    'assets/mp3/' + options?.filename || 'assets/mp3/output.mp3',
+    'assets/' + options?.filename || 'assets/output.mp3',
   );
 
   const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);

@@ -41,7 +41,11 @@ export class SongsController {
   ): Promise<StreamableFile> {
     const { params } = request;
 
-    const fp = path.join(process.cwd(), `assets/mp3/song_${params.id}.mp3`);
+    if (!fs.existsSync(path.join(process.cwd(), `assets`))) {
+      fs.mkdirSync('assets');
+    }
+
+    const fp = path.join(process.cwd(), `assets/song_${params.id}.mp3`);
     if (!fs.existsSync(fp)) {
       console.log('Create tts sample');
       if (await this.songsService.exists(params.id)) {
