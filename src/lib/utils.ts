@@ -31,6 +31,9 @@ export function escapeChars(input: string) {
   input = input.replace(/[ÀÁ]/g, 'A');
   input = input.replace(/[ÚÙ]/g, 'U');
 
+  input = input.replace(/[ŕ]/g, 'r');
+  input = input.replace(/[Ŕ]/g, 'R');
+
   input = input.replace(/[ž]/g, 'z');
   input = input.replace(/[Ž]/g, 'Z');
   input = input.replace(/[š]/g, 's');
