@@ -44,7 +44,7 @@ export class TokensService implements OnModuleInit {
       return;
     }
 
-    const button = new Gpio(23, 'in', 'rising', { debounceTimeout: 100 });
+    const button = new Gpio(23, 'in', 'rising', { debounceTimeout: 50 });
 
     button.watch(async (err, value) => {
       if (err) {
