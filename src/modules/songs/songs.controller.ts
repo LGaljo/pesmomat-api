@@ -2,8 +2,8 @@ import {
   BadRequestException,
   Controller,
   Get,
-  NotFoundException,
   Post,
+  Put,
   Req,
   Res,
   StreamableFile,
@@ -23,15 +23,27 @@ export class SongsController {
     const { params } = request;
 
     const limit = Number(params?.limit) || 15;
-    const skip = Number(params?.skip) || 15;
+    const skip = Number(params?.skip) || null;
 
-    return this.songsService.findAll(limit, skip);
+    return this.songsService.findAll(limit, skip, request?.query);
   }
 
   @Get(':id')
   public async getSong(@Req() request: IRequest): Promise<any> {
     const { params } = request;
     return this.songsService.findOne(params?.id);
+  }
+
+  @Put(':id')
+  public async updateSong(@Req() request: IRequest): Promise<any> {
+    const { body, params } = request;
+    return this.songsService.updateOne(params?.id, body);
+  }
+
+  @Post('favourite/:id')
+  public async manageFavourites(@Req() request: IRequest): Promise<any> {
+    const { params } = request;
+    return this.songsService.manageFavourites(params?.id);
   }
 
   @Get('play/:id')

@@ -16,7 +16,7 @@ export async function printOnThermalPaper(song: Song) {
       printer.bold(true);
       printer.printLine(escapeChars(song.title));
       printer.bold(false);
-      printer.printLine(escapeChars(song.author));
+      printer.printLine(escapeChars(`${song.author.firstName} ${song.author.lastName}`));
       printer.printLine('');
       song.content.split('<br>').map((line: string) => {
         printer.printLine(escapeChars(line));
