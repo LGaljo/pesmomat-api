@@ -48,9 +48,17 @@ export class AuthorService {
       .exec();
   }
 
-  async findAll(): Promise<AuthorDocument[]> {
+  async findAll(filter: any): Promise<AuthorDocument[]> {
+    const params = { deletedAt: null };
+    if (filter?.period) {
+      params['category'] = new ObjectId(filter.period);
+    }
+    if (filter?.lang) {
+      params['language'] = filter.lang;
+    }
+
     return this.authorModel
-      .find({ deletedAt: null })
+      .find(params)
       .sort({ name: 1 })
       .populate('category')
       .exec();

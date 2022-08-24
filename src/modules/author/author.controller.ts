@@ -8,8 +8,8 @@ export class AuthorController {
   constructor(private readonly service: AuthorService) {}
 
   @Get()
-  public async getAll(): Promise<any> {
-    return await this.service.findAll();
+  public async getAll(@Req() request: IRequest): Promise<any> {
+    return await this.service.findAll(request?.query);
   }
 
   @Get(':id')

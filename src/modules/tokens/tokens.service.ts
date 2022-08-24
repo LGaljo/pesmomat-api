@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Token, TokenDocument } from './tokens.schema';
 import { Gpio } from 'onoff';
-import { response } from 'express';
 
 @Injectable()
 export class TokensService implements OnModuleInit {
@@ -13,15 +12,14 @@ export class TokensService implements OnModuleInit {
 
   async set(value: number): Promise<any> {
     if (await this.exists()) {
-      console.log('update');
-      const response = await this.tokensModel
+      await this.tokensModel
         .updateMany({ only: 1 }, { $inc: { amount: value } })
         .exec();
     } else {
-      console.log('create');
       await this.tokensModel.create({ amount: value });
     }
-    return response;
+
+    return this.getValue();
   }
 
   async setOne(): Promise<TokenDocument> {
