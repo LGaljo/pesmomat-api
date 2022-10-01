@@ -6,6 +6,7 @@ export interface Env {
   MONGO_URI: string;
   ON_RPI: boolean;
   AZURE_API_KEY: string;
+  PRINTER_NAME: string;
 }
 
 dotenv.config();
@@ -16,4 +17,5 @@ export const env: Env = {
   ON_RPI: Boolean(process.env['ON_RPI']),
   MONGO_URI: process.env['MONGO_URI'],
   AZURE_API_KEY: process.env['AZURE_API_KEY'],
+  PRINTER_NAME: process.env['PRINTER_NAME'],
 };

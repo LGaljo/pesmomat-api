@@ -8,6 +8,7 @@ import {
   types as PrinterTypes,
 } from 'node-thermal-printer';
 import * as prt from 'printer';
+import { env } from '../config/env';
 
 export async function printOnThermalPaper(song: Song) {
   const serialport = new SerialPort({ path: '/dev/ttyS0', baudRate: 9600 });
@@ -43,7 +44,7 @@ export async function printOnThermalPaper(song: Song) {
 export async function printThermalPrinter(song: Song) {
   const printer = new ThermalPrinter({
     type: PrinterTypes.EPSON,
-    interface: 'printer:POS-80',
+    interface: 'printer:' + env.PRINTER_NAME,
     characterSet: 'SLOVENIA',
     driver: require('printer'),
   });
