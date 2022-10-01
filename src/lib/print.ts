@@ -56,6 +56,9 @@ export async function printThermalPrinter(song: Song) {
     throw new Error('Printer is not connected');
   }
 
+  printer.alignLeft();
+  printer.println('');
+  printer.println('');
   printer.println('');
   printer.bold(true);
   printer.println(song.title);
