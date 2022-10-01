@@ -57,7 +57,7 @@ export class SongsService {
       .find(params)
       .skip(skip)
       // .limit(limit)
-      .sort({ _id: -1 })
+      .sort({ title: 1 })
       .populate('author')
       .populate('category')
       .exec();
@@ -137,7 +137,7 @@ export class SongsService {
     return await this.findOne(id);
   }
 
-  async tts(text: string, songId: string) {
+  async tts(text: string, songId?: string) {
     if (songId) {
       const song = await this.findOne(songId);
       text = song.content;
@@ -149,7 +149,7 @@ export class SongsService {
     text = text.replace(/[àá]/g, 'a');
     text = text.replace(/[úù]/g, 'u');
 
-    return await synthesizeSpeech(text, {
+    return synthesizeSpeech(text, {
       filename: `song_${songId}.mp3`,
     });
   }

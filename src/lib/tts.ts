@@ -25,9 +25,7 @@ export async function synthesizeSpeech(text: any, options?: any) {
   synthesizer.speakTextAsync(
     text,
     (result) => {
-      if (result) {
-        console.log(JSON.stringify(result));
-      }
+      console.log(JSON.stringify(result));
       synthesizer.close();
     },
     (error) => {

@@ -33,10 +33,11 @@ let app: INestApplicationContext;
     song.category = (category as any)._id;
     const res = await songsService.create(song);
 
+    await songsService.tts(null, (res as any)._id);
     console.log(song.title);
   }
 
-  console.log(await songsService.findAll());
+  console.log((await songsService.findAll()).length);
 
   await app.close();
   process.exit();
@@ -46,26 +47,31 @@ let app: INestApplicationContext;
 });
 
 function readFile() {
-  const file = fs.readFileSync('./tmp/import-1.txt', {
+  const file = fs.readFileSync('./tmp/import-3.txt', {
     encoding: 'utf-8',
     flag: 'r',
   });
 
   const raw = file.split('%%%%');
   const songs = raw.map((s: any) => {
-    const line = s.trim().split('\r\n');
-    const author = line[1].trim().split(',');
-    return {
-      title: line[0].trim(),
-      author: {
-        firstName: author[0].trim(),
-        lastName: author[1].trim(),
-        category: null,
-      },
-      category: line[2].trim(),
-      language: line[3].trim(),
-      content: line.slice(4).join('<br>'),
-    };
+    try {
+      const line = s.trim().split('\r\n');
+      const author = line[1].trim().split(',');
+      return {
+        title: line[0].trim(),
+        author: {
+          firstName: author[0].trim(),
+          lastName: author[1].trim(),
+          category: null,
+        },
+        category: line[2].trim(),
+        language: line[3].trim(),
+        content: line.slice(4).join('<br>'),
+      };
+    } catch (err) {
+      console.log(err);
+      console.log(s);
+    }
   });
 
   return songs;
