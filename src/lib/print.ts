@@ -9,6 +9,7 @@ import {
 } from 'node-thermal-printer';
 import * as prt from 'printer';
 import { env } from '../config/env';
+import * as path from "path";
 
 export async function printOnThermalPaper(song: Song) {
   const serialport = new SerialPort({ path: '/dev/ttyS0', baudRate: 9600 });
@@ -57,20 +58,24 @@ export async function printThermalPrinter(song: Song) {
 
   printer.println('');
   printer.bold(true);
-  printer.println(escapeChars(song.title));
+  printer.println(song.title);
   printer.bold(false);
-  printer.println(
-    escapeChars(`${song.author.firstName} ${song.author.lastName}`),
-  );
+  printer.println(`${song.author.firstName} ${song.author.lastName}`);
   printer.println('');
   song.content.split('<br>').map((line: string) => {
-    printer.println(escapeChars(line));
+    printer.println(line);
   });
   printer.println('');
   printer.alignCenter();
-  await printer.printImage('./public/images/Vrabec-logo.png');
+  await printer.printImage(
+    path.join(process.cwd(), `static/images/Vrabec-logo.png`),
+  );
   printer.println('');
   printer.println('www.vrabecanarhist.eu');
+  printer.println('');
+  printer.println('');
+  printer.println('');
+  printer.println('');
   printer.println('');
 
   try {
