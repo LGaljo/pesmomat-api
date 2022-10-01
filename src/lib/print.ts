@@ -49,7 +49,7 @@ export async function printThermalPrinter(song: Song) {
     driver: require('printer'),
   });
 
-  console.log(prt.getPrinter('POS-80'));
+  console.log(prt.getPrinter('printer:' + env.PRINTER_NAME));
 
   if (!(await printer.isPrinterConnected())) {
     throw new Error('Printer is not connected');
@@ -68,7 +68,7 @@ export async function printThermalPrinter(song: Song) {
   });
   printer.println('');
   printer.alignCenter();
-  await printer.printImage('./assets__/Vrabec-logo.png');
+  await printer.printImage('./public/images/Vrabec-logo.png');
   printer.println('');
   printer.println('www.vrabecanarhist.eu');
   printer.println('');
