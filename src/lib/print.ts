@@ -9,7 +9,7 @@ import {
 } from 'node-thermal-printer';
 import * as prt from 'printer';
 import { env } from '../config/env';
-import * as path from "path";
+import * as path from 'path';
 
 export async function printOnThermalPaper(song: Song) {
   const serialport = new SerialPort({ path: '/dev/ttyS0', baudRate: 9600 });
@@ -50,7 +50,7 @@ export async function printThermalPrinter(song: Song) {
     driver: require('printer'),
   });
 
-  console.log(prt.getPrinter('printer:' + env.PRINTER_NAME));
+  console.log(prt.getPrinter(env.PRINTER_NAME));
 
   if (!(await printer.isPrinterConnected())) {
     throw new Error('Printer is not connected');
