@@ -1,18 +1,19 @@
 import {
   BadRequestException,
-  Controller,
-  Get,
+  Controller, Delete,
+  Get, Param,
   Post,
   Put,
   Req,
   Res,
-  StreamableFile,
-} from '@nestjs/common';
+  StreamableFile
+} from "@nestjs/common";
 import { SongsService } from './songs.service';
 import { IRequest } from '../../middlewares/context.middleware';
 import { createReadStream } from 'fs';
 import * as path from 'path';
 import * as fs from 'fs';
+import { ObjectId } from "mongodb";
 
 @Controller('songs')
 export class SongsController {
@@ -90,5 +91,10 @@ export class SongsController {
     }
 
     return await this.songsService.tts(body.text, params?.id);
+  }
+
+  @Delete(':id')
+  public async deleteOne(@Param('id') id: string) {
+    return this.songsService.deleteOne(id);
   }
 }

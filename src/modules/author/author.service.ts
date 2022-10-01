@@ -70,6 +70,15 @@ export class AuthorService {
       .exec();
   }
 
+  async findOneByName(
+    firstName: string,
+    lastName: string,
+  ): Promise<AuthorDocument> {
+    return this.authorModel
+      .findOne({ firstName, lastName, deletedAt: null })
+      .exec();
+  }
+
   async deleteOne(id: string): Promise<void> {
     const countItems = await this.songModel
       .findOne({ category: new ObjectId(id) as any })

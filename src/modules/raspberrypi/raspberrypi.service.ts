@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Context } from '../../context';
 import { SongsService } from '../songs/songs.service';
-import { printOnThermalPaper } from '../../lib/print';
+import { printThermalPrinter } from "../../lib/print";
 import { TokensService } from '../tokens/tokens.service';
 
 @Injectable()
@@ -33,7 +33,7 @@ export class RaspberrypiService {
     await this.tokensService.set(-1);
 
     // Print PDF
-    await printOnThermalPaper(song);
+    await printThermalPrinter(song);
     console.log('Now printing!');
     return { message: 'Printing' };
   }

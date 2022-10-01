@@ -38,3 +38,5 @@ assets/**
 assets__/**
 
 .env
+
+tmp

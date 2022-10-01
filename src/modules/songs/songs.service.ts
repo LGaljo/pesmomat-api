@@ -30,14 +30,14 @@ export class SongsService {
         _id: new ObjectId(object?.category),
       });
     }
-    await createdSong.save();
+    const res = await createdSong.save();
     return createdSong;
   }
 
   async findAll(
     limit = 15,
     skip: number = null,
-    filter: any,
+    filter?: any,
   ): Promise<SongDocument[]> {
     const params = { deletedAt: null };
     if (filter?.author) {
@@ -56,7 +56,7 @@ export class SongsService {
     return await this.songModel
       .find(params)
       .skip(skip)
-      .limit(limit)
+      // .limit(limit)
       .sort({ _id: -1 })
       .populate('author')
       .populate('category')
@@ -71,6 +71,14 @@ export class SongsService {
       .exec();
   }
 
+  async findOneByName(id: string): Promise<SongDocument> {
+    return this.songModel
+      .findOne({ _id: id, deletedAt: null })
+      .populate('author')
+      .populate('category')
+      .exec();
+  }
+
   async exists(songId: string): Promise<boolean> {
     const obj = await this.songModel
       .findOne({ songId, deletedAt: null })
@@ -78,16 +86,17 @@ export class SongsService {
     return !!obj?._id;
   }
 
-  async deleteOne(id: string): Promise<void> {
+  async deleteOne(id: string): Promise<any> {
     const object = await this.songModel
       .findOne({ _id: new ObjectId(id) })
       .exec();
 
     object.deletedAt = new Date();
 
-    await this.songModel
+    const res = await this.songModel
       .updateOne({ _id: new ObjectId(id) }, { $set: object })
       .exec();
+    return res;
   }
 
   async updateOne(id: string, data: any) {

@@ -20,7 +20,10 @@ export class CategoriesService {
   }
 
   async findAll(): Promise<CategoryDocument[]> {
-    return this.categoryModel.find({ deletedAt: null }).sort({ name: 1 }).exec();
+    return this.categoryModel
+      .find({ deletedAt: null })
+      .sort({ name: 1 })
+      .exec();
   }
 
   async findOneById(id: ObjectId): Promise<CategoryDocument> {
