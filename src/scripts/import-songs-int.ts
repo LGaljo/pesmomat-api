@@ -30,11 +30,14 @@ let app: INestApplicationContext;
   //   await categoryService.create(category);
   // }
 
-  // for (const author of JSON.parse(authors)) {
-  //   await authorService.create(author);
-  // }
+  for (const author of JSON.parse(authors)) {
+    author.category = author.category._id;
+    await authorService.create(author);
+  }
 
   for (const song of JSON.parse(songs)) {
+    song.category = song.category._id;
+    song.author = song.author._id;
     await songsService.create(song);
   }
 
