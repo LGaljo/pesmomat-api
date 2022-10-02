@@ -19,7 +19,7 @@ export class AuthorService {
 
   async create(object: any): Promise<AuthorDocument> {
     const createdAuthor = new this.authorModel(object);
-    if (object?.category) {
+    if (object?.category && !object?.category.hasOwnProperty('name')) {
       createdAuthor.category = await this.categoryModel.findOne({
         _id: new ObjectId(object?.category),
       });
@@ -48,7 +48,7 @@ export class AuthorService {
       .exec();
   }
 
-  async findAll(filter: any): Promise<AuthorDocument[]> {
+  async findAll(filter?: any): Promise<AuthorDocument[]> {
     const params = { deletedAt: null };
     if (filter?.period) {
       params['category'] = new ObjectId(filter.period);

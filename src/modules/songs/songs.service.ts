@@ -20,12 +20,12 @@ export class SongsService {
 
   async create(object: any): Promise<SongDocument> {
     const createdSong = new this.songModel(object);
-    if (object?.author) {
+    if (object?.author && !object?.author.hasOwnProperty('firstName')) {
       createdSong.author = await this.authorModel.findOne({
         _id: new ObjectId(object?.author),
       });
     }
-    if (object?.category) {
+    if (object?.category && !object?.category.hasOwnProperty('name')) {
       createdSong.category = await this.categoryModel.findOne({
         _id: new ObjectId(object?.category),
       });
