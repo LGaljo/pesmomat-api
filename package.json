@@ -27,7 +27,7 @@
     "@nestjs/platform-express": "^9.1.2",
     "@nestjs/schedule": "^2.1.0",
     "dotenv": "^16.0.3",
-    "helmet": "^6.0.0",
+    "helmet": "^4.6.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.23.0",
     "mongoose": "^6.6.3",
     "node-thermal-printer": "^4.1.2",
