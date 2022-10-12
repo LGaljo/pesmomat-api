@@ -15,6 +15,7 @@ import { SongsModule } from './modules/songs/songs.module';
 import { TokensModule } from './modules/tokens/tokens.module';
 import { AuthorModule } from './modules/author/author.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { SyncService } from './modules/sync/sync.service';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
     CategoriesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, SyncService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
