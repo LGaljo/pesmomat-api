@@ -9,6 +9,7 @@ let app: INestApplicationContext;
 (async () => {
   app = await NestFactory.createApplicationContext(AppModule);
   const songsService = app.get<SongsService>(SongsService);
+  const errors = [];
 
   const songs = await songsService.findAll();
   const checked = songs.filter((song) => {
@@ -32,9 +33,11 @@ let app: INestApplicationContext;
       await songsService.tts(null, (song as any)._id);
     } catch (err) {
       console.error(err);
+      errors.push({ name: song.title, id: (song as any)._id });
     }
   }
 
+  console.log(errors);
   await app.close();
   process.exit();
 })().catch(async (err) => {

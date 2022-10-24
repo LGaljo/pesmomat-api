@@ -71,9 +71,18 @@ export class SongsService {
       .exec();
   }
 
-  async findOneByName(id: string): Promise<SongDocument> {
+  async findOneByTitle(
+    title: string,
+    includeDeleted = false,
+  ): Promise<SongDocument> {
+    const query = {
+      title,
+    };
+    if (includeDeleted) {
+      query['deletedAt'] = null;
+    }
     return this.songModel
-      .findOne({ _id: id, deletedAt: null })
+      .findOne(query)
       .populate('author')
       .populate('category')
       .exec();
@@ -150,6 +159,7 @@ export class SongsService {
     text = text.replace(/[úù]/g, 'u');
 
     return synthesizeSpeech(text, {
+      voice: 'male',
       filename: `song_${songId}.mp3`,
     });
   }

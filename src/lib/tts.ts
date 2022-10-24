@@ -22,15 +22,19 @@ export async function synthesizeSpeech(text: any, options?: any) {
   );
 
   const synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
-  synthesizer.speakTextAsync(
-    text,
-    (result) => {
-      console.log(JSON.stringify(result));
-      synthesizer.close();
-    },
-    (error) => {
-      console.log(error);
-      synthesizer.close();
-    },
-  );
+  return new Promise((resolve, reject) => {
+    synthesizer.speakTextAsync(
+      text,
+      (result) => {
+        console.log(JSON.stringify(result));
+        synthesizer.close();
+        resolve(result);
+      },
+      (error) => {
+        console.log(error);
+        synthesizer.close();
+        reject(error);
+      },
+    );
+  });
 }
