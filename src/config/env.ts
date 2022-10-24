@@ -17,7 +17,7 @@ export const env: Env = {
   API_HOST: process.env['API_HOST'],
   ON_RPI: Boolean(process.env['ON_RPI']),
   MONGO_URI: process.env['MONGO_URI'],
-  MONGO2_URI: process.env['MONGO_URI'],
+  MONGO2_URI: process.env['MONGO2_URI'],
   AZURE_API_KEY: process.env['AZURE_API_KEY'],
   PRINTER_NAME: process.env['PRINTER_NAME'],
 };
