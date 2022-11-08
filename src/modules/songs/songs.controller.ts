@@ -15,6 +15,7 @@ import { IRequest } from '../../middlewares/context.middleware';
 import { createReadStream } from 'fs';
 import * as path from 'path';
 import * as fs from 'fs';
+import { ObjectId } from "mongodb";
 
 @Controller('songs')
 export class SongsController {
@@ -33,7 +34,7 @@ export class SongsController {
   @Get(':id')
   public async getSong(@Req() request: IRequest): Promise<any> {
     const { params } = request;
-    return this.songsService.findOne(params?.id);
+    return this.songsService.findOne(new ObjectId(params?.id));
   }
 
   @Put(':id')

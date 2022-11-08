@@ -20,7 +20,7 @@ let app: INestApplicationContext;
       { id: 'id', title: 'ID' },
       { id: 'author', title: 'Avtor' },
       { id: 'title', title: 'Naslov' },
-      { id: 'period', title: 'Obdobje' },
+      { id: 'period', title: 'Zvrst' },
     ],
   });
 

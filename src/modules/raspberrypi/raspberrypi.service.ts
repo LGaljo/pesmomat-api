@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Context } from '../../context';
 import { SongsService } from '../songs/songs.service';
-import { printThermalPrinter } from "../../lib/print";
+import { printThermalPrinter } from '../../lib/print';
 import { TokensService } from '../tokens/tokens.service';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class RaspberrypiService {
@@ -23,14 +24,14 @@ export class RaspberrypiService {
     }
 
     // Get songs
-    const song = await this.songsService.findOne(songId);
+    const song = await this.songsService.findOne(new ObjectId(songId));
 
     if (!song) {
       return { message: 'Song does not exist' };
     }
 
     // Decrease available prints
-    await this.tokensService.set(-1);
+    // await this.tokensService.set(-1);
 
     // Print PDF
     await printThermalPrinter(song);

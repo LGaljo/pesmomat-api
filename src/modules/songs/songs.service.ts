@@ -1,14 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { Song, SongDocument } from './songs.schema';
-import { InjectModel } from '@nestjs/mongoose';
-import { synthesizeSpeech } from '../../lib/tts';
-import { ObjectId } from 'mongodb';
-import {
-  Category,
-  CategoryDocument,
-} from '../categories/schemas/category.schema';
-import { Author, AuthorDocument } from '../author/author.schema';
+import { Injectable } from "@nestjs/common";
+import { Model } from "mongoose";
+import { Song, SongDocument } from "./songs.schema";
+import { InjectModel } from "@nestjs/mongoose";
+import { synthesizeSpeech } from "../../lib/tts";
+import { ObjectId } from "mongodb";
+import { Category, CategoryDocument } from "../categories/schemas/category.schema";
+import { Author, AuthorDocument } from "../author/author.schema";
 
 @Injectable()
 export class SongsService {
@@ -63,7 +60,7 @@ export class SongsService {
       .exec();
   }
 
-  async findOne(id: string): Promise<SongDocument> {
+  async findOne(id: ObjectId): Promise<SongDocument> {
     return this.songModel
       .findOne({ _id: id, deletedAt: null })
       .populate('author')
@@ -102,36 +99,39 @@ export class SongsService {
 
     object.deletedAt = new Date();
 
-    const res = await this.songModel
+    return await this.songModel
       .updateOne({ _id: new ObjectId(id) }, { $set: object })
       .exec();
-    return res;
   }
 
   async updateOne(id: string, data: any) {
     const object = await this.songModel
       .findOne({ _id: new ObjectId(id) })
+      .populate('author')
+      .populate('category')
       .exec();
 
     object.title = data?.title;
     object.content = data?.content;
     object.url = data?.url;
-    if ((object?.author as any)?._id !== data.authorId) {
+    if (data?.favourite) object.favourite = data?.favourite;
+    if (data.authorId && (object?.author as any)?._id !== data.authorId) {
       object.author = await this.authorModel.findOne({
         _id: new ObjectId(data?.authorId),
       });
     }
-    if ((object?.category as any)?._id !== data.categoryId) {
+    if (data.categoryId && (object?.category as any)?._id !== data.categoryId) {
       object.category = await this.categoryModel.findOne({
         _id: new ObjectId(data?.categoryId),
       });
     }
 
-    await this.songModel
-      .updateOne({ _id: new ObjectId(id) }, { $set: object })
-      .exec();
+    await object.save();
+    // await this.songModel
+    //   .updateOne({ _id: new ObjectId(id) }, { $set: object })
+    //   .exec();
 
-    return await this.findOne(id);
+    return await this.findOne(new ObjectId(id));
   }
 
   async manageFavourites(id: string) {
@@ -143,12 +143,12 @@ export class SongsService {
 
     await object.save();
 
-    return await this.findOne(id);
+    return await this.findOne(new ObjectId(id));
   }
 
   async tts(text: string, songId?: string) {
     if (songId) {
-      const song = await this.findOne(songId);
+      const song = await this.findOne(new ObjectId(songId));
       text = song.content;
     }
     text = text.replace(/<br>/g, ', ');

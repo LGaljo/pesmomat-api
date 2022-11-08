@@ -24,7 +24,7 @@ let app: INestApplicationContext;
       return false;
     }
 
-    return false;
+    return true;
   });
 
   for (const song of checked) {
