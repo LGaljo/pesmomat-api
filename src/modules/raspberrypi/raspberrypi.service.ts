@@ -16,12 +16,12 @@ export class RaspberrypiService {
 
   async printSong(context: Context, songId: string): Promise<any> {
     // Check for credits
-    const availablePrints = await this.tokensService.getValue();
+    // const availablePrints = await this.tokensService.getValue();
 
-    if (availablePrints.amount <= 0) {
-      return { message: 'Insufficient funds' };
-      // throw new BadRequestException('Insufficient funds');
-    }
+    // if (availablePrints.amount <= 0) {
+    //   return { message: 'Insufficient funds' };
+    //   // throw new BadRequestException('Insufficient funds');
+    // }
 
     // Get songs
     const song = await this.songsService.findOne(new ObjectId(songId));
