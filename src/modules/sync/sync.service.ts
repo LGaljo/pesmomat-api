@@ -6,14 +6,18 @@ import { env } from '../../config/env';
 @Injectable()
 export class SyncService implements OnModuleInit {
   async onModuleInit() {
-    await this.handleCron();
+    if (env.SYNC_ENABLED) {
+      await this.handleCron();
+    }
   }
 
   // @Cron(new Date(Date.now() + 1000))
   @Cron('0 */30 * * * *')
   async handleCron() {
-    console.log('Start job ' + new Date().toISOString());
-    await this.connectToDB();
+    if (env.SYNC_ENABLED) {
+      console.log('Start job ' + new Date().toISOString());
+      await this.connectToDB();
+    }
   }
 
   private async connectToDB() {
