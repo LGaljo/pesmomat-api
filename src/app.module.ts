@@ -5,7 +5,6 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ContextMiddleware } from './middlewares/context.middleware';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RaspberrypiModule } from './modules/raspberrypi/raspberrypi.module';
@@ -28,7 +27,7 @@ import { SyncService } from './modules/sync/sync.service';
     CategoriesModule,
   ],
   controllers: [AppController],
-  providers: [AppService, SyncService],
+  providers: [SyncService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

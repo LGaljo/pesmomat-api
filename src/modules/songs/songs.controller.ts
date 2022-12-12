@@ -15,7 +15,8 @@ import { IRequest } from '../../middlewares/context.middleware';
 import { createReadStream } from 'fs';
 import * as path from 'path';
 import * as fs from 'fs';
-import { ObjectId } from "mongodb";
+import { ObjectId } from 'mongodb';
+import { languages } from '../../lib/tts';
 
 @Controller('songs')
 export class SongsController {
@@ -31,9 +32,17 @@ export class SongsController {
     return this.songsService.findAll(limit, skip, request?.query);
   }
 
+  @Get('languages')
+  public async getLanguages(@Req() request: IRequest): Promise<any> {
+    return languages;
+  }
+
   @Get(':id')
   public async getSong(@Req() request: IRequest): Promise<any> {
     const { params } = request;
+    if (!params?.id) {
+      throw new BadRequestException('Missing ID');
+    }
     return this.songsService.findOne(new ObjectId(params?.id));
   }
 
@@ -72,7 +81,7 @@ export class SongsController {
 
     res.set({
       'Content-Type': 'audio/mpeg',
-      'Content-Disposition': 'attachment; filename="audio.mp3"',
+      'Content-Disposition': `attachment; filename="audio.mp3"`,
     });
 
     return new StreamableFile(file);
@@ -81,18 +90,15 @@ export class SongsController {
   @Post()
   public async createSong(@Req() request: IRequest): Promise<any> {
     const { body } = request;
-    return this.songsService.create(body);
+    return;
+    // return this.songsService.create(body);
   }
 
-  @Post(['tts', 'tts/:id'])
+  @Post('tts/:id')
   public async createTTS(@Req() request: IRequest): Promise<any> {
     const { body, params } = request;
 
-    if (!body?.text) {
-      throw new BadRequestException('Missing text field in body');
-    }
-
-    return await this.songsService.tts(body.text, params?.id);
+    return await this.songsService.tts(params?.id, body?.options);
   }
 
   @Delete(':id')

@@ -18,7 +18,7 @@ let app: INestApplicationContext;
   raws.shift();
 
   for (const line of raws) {
-    const props = line.split(';');
+    const props = line.split('\t');
 
     if (props.length >= 5) {
       const song = await songsService

@@ -1,11 +1,14 @@
-import { Injectable } from "@nestjs/common";
-import { Model } from "mongoose";
-import { Song, SongDocument } from "./songs.schema";
-import { InjectModel } from "@nestjs/mongoose";
-import { synthesizeSpeech } from "../../lib/tts";
-import { ObjectId } from "mongodb";
-import { Category, CategoryDocument } from "../categories/schemas/category.schema";
-import { Author, AuthorDocument } from "../author/author.schema";
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { Song, SongDocument } from './songs.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { synthesizeSpeech } from '../../lib/tts';
+import { ObjectId } from 'mongodb';
+import {
+  Category,
+  CategoryDocument,
+} from '../categories/schemas/category.schema';
+import { Author, AuthorDocument } from '../author/author.schema';
 
 @Injectable()
 export class SongsService {
@@ -112,7 +115,8 @@ export class SongsService {
       .exec();
 
     object.title = data?.title;
-    object.content = data?.content;
+    // object.content = data?.content;
+    object.contents = data?.contents;
     object.url = data?.url;
     if (data?.favourite) object.favourite = data?.favourite;
     if (data.authorId && (object?.author as any)?._id !== data.authorId) {
@@ -146,11 +150,15 @@ export class SongsService {
     return await this.findOne(new ObjectId(id));
   }
 
-  async tts(text: string, songId?: string) {
-    if (songId) {
-      const song = await this.findOne(new ObjectId(songId));
-      text = song.content;
+  async tts(songId?: string, options?: any) {
+    let text;
+    const song = await this.findOne(new ObjectId(songId));
+    if (options?.language && !!song?.contents[options?.language]) {
+      text = song.contents[options?.language];
+    } else {
+      text = song?.content;
     }
+
     text = text.replace(/<br>/g, ', ');
     text = text.replace(/[óòô]/g, 'o');
     text = text.replace(/[eèéêə]/g, 'e');
@@ -159,7 +167,7 @@ export class SongsService {
     text = text.replace(/[úù]/g, 'u');
 
     return synthesizeSpeech(text, {
-      voice: 'male',
+      options,
       filename: `song_${songId}.mp3`,
     });
   }

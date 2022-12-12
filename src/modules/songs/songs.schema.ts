@@ -17,6 +17,9 @@ export class Song {
   content: string;
 
   @Prop()
+  contents: any[];
+
+  @Prop()
   url: string;
 
   @Prop()

@@ -33,17 +33,23 @@ let app: INestApplicationContext;
       }
       const exists = await songsService.findOneByTitle(song.title);
       if (exists) {
-        console.log(`Song exists: ${song.title} [${(song as any)._id}]`);
-        continue;
+        console.log(`Song exists: ${exists.title} [${(exists as any)._id}]`);
+        // continue;
       }
       song.author = (author as any)._id;
 
       song.category = (category as any)._id;
-      const res = await songsService.create(song);
-
+      let res;
+      if (exists && (exists as any)?._id) {
+        res = await songsService.updateOne((exists as any)._id, song);
+      } else {
+        res = await songsService.create(song);
+      }
       await songsService.tts(null, (res as any)._id);
+
       console.log(song.title);
     } catch (err) {
+      console.log(err);
       console.log(`Error: ${song?.title} [${(song as any)?._id}]`);
       errors.push({ name: song?.title, id: (song as any)?._id });
     }
@@ -61,7 +67,7 @@ let app: INestApplicationContext;
 
 function readFile() {
   const errors = [];
-  const file = fs.readFileSync('./tmp/import-4.txt', {
+  const file = fs.readFileSync('./tmp/import-franci.txt', {
     encoding: 'utf-8',
     flag: 'r',
   });
