@@ -1,16 +1,11 @@
-import {
-  printer as ThermalPrinter,
-  types as PrinterTypes,
-} from '../../src/node-thermal-printer';
-import * as prt from 'printer';
-import { env } from '../config/env';
+import { CharacterSet, printer as ThermalPrinter, types as PrinterTypes } from "node-thermal-printer";
 
 (async () => {
   const printerName = 'CUSTOM TG2480-H';
   const printer = new ThermalPrinter({
     type: PrinterTypes.TGH,
     interface: 'printer:' + printerName,
-    characterSet: 'SLOVENIA',
+    characterSet: CharacterSet.SLOVENIA,
     driver: require('printer'),
   });
 
