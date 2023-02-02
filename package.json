@@ -21,24 +21,22 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@nestjs/common": "^9.1.2",
-    "@nestjs/core": "^9.1.2",
-    "@nestjs/mongoose": "^9.2.0",
-    "@nestjs/platform-express": "^9.1.2",
+    "@nestjs/common": "^9.2.1",
+    "@nestjs/core": "^9.2.1",
+    "@nestjs/mongoose": "^9.2.1",
+    "@nestjs/platform-express": "^9.2.1",
     "@nestjs/schedule": "^2.1.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.0.3",
     "helmet": "^4.6.0",
-    "microsoft-cognitiveservices-speech-sdk": "^1.23.0",
-    "mongoose": "^6.6.3",
-    "node-thermal-printer": "^4.1.2",
+    "microsoft-cognitiveservices-speech-sdk": "^1.25.0",
+    "mongoose": "^6.9.0",
+    "node-thermal-printer": "github:LGaljo/node-thermal-printer",
     "onoff": "^6.0.3",
     "printer": "^0.4.0",
     "reflect-metadata": "^0.1.13",
-    "rimraf": "^3.0.2",
-    "rxjs": "^7.5.7",
-    "serialport": "^10.4.0",
-    "thermalprinter": "^0.3.10"
+    "rimraf": "^4.1.2",
+    "rxjs": "^7.8.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.1.4",

@@ -1,32 +1,38 @@
 import {
   printer as ThermalPrinter,
   types as PrinterTypes,
-} from 'node-thermal-printer';
+} from '../../src/node-thermal-printer';
 import * as prt from 'printer';
+import { env } from '../config/env';
 
 (async () => {
+  const printerName = 'CUSTOM TG2480-H';
   const printer = new ThermalPrinter({
-    type: PrinterTypes.EPSON,
-    interface: 'printer:POS-80',
+    type: PrinterTypes.TGH,
+    interface: 'printer:' + printerName,
     characterSet: 'SLOVENIA',
     driver: require('printer'),
   });
 
-  console.log(prt.getPrinter('POS-80'));
+  // console.log(prt.getPrinters());
+  // console.log(prt.getPrinter(printerName));
 
   console.log(await printer.isPrinterConnected());
 
   printer.alignCenter();
-  printer.println('ABCČĆDĐEFGHIJKLMNOPQRSŠTUVWXYZŽ');
-  printer.println('ABCČĆDĐEFGHIJKLMNOPQRSŠTUVWXYZŽ');
-  printer.println('ABCČĆDĐEFGHIJKLMNOPQRSŠTUVWXYZŽ');
-  printer.println('ABCČĆDĐEFGHIJKLMNOPQRSŠTUVWXYZŽ');
-  // await printer.printImage('./assets__/Vrabec-logo.png');
+  printer.println(`
+  ABCČĆDĐEFGHIJKLMNOPQRSŠTUVWXYZŽ
+  ABCČĆDĐEFGHIJKLMNOPQRSŠTUVWXYZŽ
+  `);
+  // await printer.printImage('./static/images/Vrabec-logo-2.png');
+  printer.printLogo(0, 0);
   printer.cut();
+  // printer.printQR('www.vrabecanarhist.eu');
+  // printer.cut();
 
   try {
-    const execute = printer.execute();
-    console.error('Print done!');
+    await printer.execute();
+    console.log('Print done!');
   } catch (error) {
     console.log('Print failed:', error);
   }

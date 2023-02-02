@@ -21,5 +21,5 @@ export const env: Env = {
   MONGO2_URI: process.env['MONGO2_URI'],
   AZURE_API_KEY: process.env['AZURE_API_KEY'],
   PRINTER_NAME: process.env['PRINTER_NAME'],
-  SYNC_ENABLED: Boolean(process.env['SYNC_ENABLED']) || false,
+  SYNC_ENABLED: process.env['SYNC_ENABLED'] === 'true' || false,
 };
