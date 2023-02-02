@@ -153,11 +153,8 @@ export class SongsService {
   async tts(songId?: string, options?: any) {
     let text;
     const song = await this.findOne(new ObjectId(songId));
-    if (options?.language && !!song?.contents[options?.language]) {
-      text = song.contents[options?.language];
-    } else {
-      text = song?.content;
-    }
+    const lang = options?.language || 'sl';
+    text = song.contents?.find((c) => c.language === lang)?.content;
 
     text = text.replace(/<br>/g, ', ');
     text = text.replace(/[óòô]/g, 'o');
@@ -168,7 +165,7 @@ export class SongsService {
 
     return synthesizeSpeech(text, {
       options,
-      filename: `song_${songId}.mp3`,
+      filename: `song_${songId}_${lang}.mp3`,
     });
   }
 }

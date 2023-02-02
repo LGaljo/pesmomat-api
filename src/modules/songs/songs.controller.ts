@@ -73,7 +73,7 @@ export class SongsController {
     if (!fs.existsSync(fp)) {
       console.log('Create tts sample');
       if (await this.songsService.exists(params.id)) {
-        await this.songsService.tts(null, params.id);
+        await this.songsService.tts(params.id, null);
       }
     }
 
@@ -90,8 +90,7 @@ export class SongsController {
   @Post()
   public async createSong(@Req() request: IRequest): Promise<any> {
     const { body } = request;
-    return;
-    // return this.songsService.create(body);
+    return this.songsService.create(body);
   }
 
   @Post('tts/:id')
