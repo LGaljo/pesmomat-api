@@ -1,4 +1,8 @@
-import { CharacterSet, printer as ThermalPrinter, types as PrinterTypes } from "node-thermal-printer";
+import {
+  CharacterSet,
+  printer as ThermalPrinter,
+  types as PrinterTypes,
+} from 'node-thermal-printer';
 
 (async () => {
   const printerName = 'CUSTOM TG2480-H';

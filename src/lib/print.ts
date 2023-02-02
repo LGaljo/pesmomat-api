@@ -22,10 +22,7 @@ export async function printThermalPrinter(song: Song) {
     throw new Error('Printer is not connected');
   }
 
-  printer.alignLeft();
-  printer.println('');
-  printer.println('');
-  printer.println('');
+  printer.setTypeFontB();
   printer.bold(true);
   printer.println(song.title);
   printer.bold(false);
@@ -35,18 +32,15 @@ export async function printThermalPrinter(song: Song) {
     printer.println(line);
   });
   printer.println('');
-  // printer.alignCenter();
-  // await printer.printImage(
-  //   path.join(process.cwd(), `static/images/Vrabec-logo.png`),
-  // );
+  printer.alignCenter();
   printer.printLogo(0, 0);
   printer.println('');
+  printer.printQR(song.url || 'www.vrabecanarhist.eu');
   printer.println('www.vrabecanarhist.eu');
-  printer.println('');
-  printer.println('');
+  printer.cut();
 
   try {
-    const execute = printer.execute();
+    await printer.execute();
     console.error('Print done!');
   } catch (error) {
     console.log('Print failed:', error);
