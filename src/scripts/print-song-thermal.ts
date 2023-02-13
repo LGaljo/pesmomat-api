@@ -4,9 +4,10 @@ import { AppModule } from '../app.module';
 import { SongsService } from '../modules/songs/songs.service';
 import { INestApplicationContext } from '@nestjs/common';
 import {
+  CharacterSet,
   printer as ThermalPrinter,
   types as PrinterTypes,
-} from '../node-thermal-printer';
+} from 'node-thermal-printer';
 
 let app: INestApplicationContext;
 
@@ -18,7 +19,7 @@ let app: INestApplicationContext;
   const printer = new ThermalPrinter({
     type: PrinterTypes.TGH,
     interface: 'printer:' + printerName,
-    characterSet: 'SLOVENIA',
+    characterSet: CharacterSet.SLOVENIA,
     driver: require('printer'),
   });
 
