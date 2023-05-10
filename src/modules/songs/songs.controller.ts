@@ -24,12 +24,12 @@ export class SongsController {
 
   @Get()
   public async getSongs(@Req() request: IRequest): Promise<any> {
-    const { params } = request;
+    const { query } = request;
 
-    const limit = Number(params?.limit) || 15;
-    const skip = Number(params?.skip) || null;
+    const limit = Number(query?.limit) || 25;
+    const page = Number(query?.page) - 1 || null;
 
-    return this.songsService.findAll(limit, skip, request?.query);
+    return this.songsService.findAll(limit, page, request?.query);
   }
 
   @Get('languages')
