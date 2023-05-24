@@ -86,3 +86,15 @@ sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -
 
 pm2 save
 ```
+
+## Export data
+Create tmp folder. Run from project root.
+```bash
+node --nolazy -r ts-node/register .\src\scripts\export-songs.ts
+```
+
+## Import data
+Have files inside tmp folder. Run from project root.
+```bash
+node --nolazy -r ts-node/register .\src\scripts\import-songs-int.ts
+```
