@@ -53,19 +53,11 @@ ON_RPI=true
 AZURE_API_KEY=<API_KEY>
 ```
 
-Running on raspberry pi requires installation of some additional libraries
-```bash
-mkdir phantomjs-raspberrypi
-cd phantomjs-raspberrypi
-# https://github.com/piksel/phantomjs-raspberrypi
-wget https://github.com/piksel/phantomjs-raspberrypi/releases/download/v2.1.1-r/phantomjs-armv6-rpi-v2.1.1.tar.xz
-tar -xf phantomjs-armv6-rpi-v2.1.1.tar.xz
-sudo cp -R bin/. /usr/bin
-sudo cp -R lib/. /usr/lib
-```
-
 ```bash
 $ npm i
+# If you get some errors about printer package, use this to use prebuilt
+$ npm install printer --target_arch=x64
+
 ```
 
 ## Running the app
@@ -93,4 +85,16 @@ pm2 startup systemd
 sudo env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u pi --hp /home/pi
 
 pm2 save
+```
+
+## Export data
+Create tmp folder. Run from project root.
+```bash
+node --nolazy -r ts-node/register .\src\scripts\export-songs.ts
+```
+
+## Import data
+Have files inside tmp folder. Run from project root.
+```bash
+node --nolazy -r ts-node/register .\src\scripts\import-songs-int.ts
 ```

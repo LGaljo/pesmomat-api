@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ObjectId } from "mongodb";
-import { Category } from '../categories/schemas/category.schema';
+import { ObjectId } from 'mongodb';
+import { Category } from '../categories/category.schema';
 
 export type AuthorDocument = Author & Document;
 
@@ -17,6 +17,9 @@ export class Author {
 
   @Prop({ default: new Date() })
   createdAt: Date;
+
+  @Prop({ default: new Date() })
+  updatedAt: Date;
 
   @Prop()
   deletedAt: Date;

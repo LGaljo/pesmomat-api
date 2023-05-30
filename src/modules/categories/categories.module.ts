@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { CategoriesSchema, Category } from './schemas/category.schema';
+import { CategoriesSchema, Category } from './category.schema';
 import { CategoriesController } from './categories.controller';
 import { Song, SongsSchema } from '../songs/songs.schema';
 

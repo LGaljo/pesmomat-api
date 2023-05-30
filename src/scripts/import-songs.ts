@@ -6,6 +6,8 @@ import { INestApplicationContext } from '@nestjs/common';
 import { AuthorService } from '../modules/author/author.service';
 import { CategoriesService } from '../modules/categories/categories.service';
 
+const dryRun = false;
+
 let app: INestApplicationContext;
 (async () => {
   app = await NestFactory.createApplicationContext(AppModule);
@@ -19,7 +21,7 @@ let app: INestApplicationContext;
   for (const song of songs) {
     try {
       let category = await categoryService.findOneByName(song.category);
-      if (!category) {
+      if (!category && !dryRun) {
         category = await categoryService.create({ name: song.category });
       }
 
@@ -28,24 +30,28 @@ let app: INestApplicationContext;
         song.author.lastName,
       );
       if (!author) {
-        song.author.category = (category as any)._id;
-        author = await authorService.create(song.author);
+        song.author.category = (category as any)?._id;
+        if (!dryRun) {
+          author = await authorService.create(song.author);
+        }
       }
       const exists = await songsService.findOneByTitle(song.title);
       if (exists) {
-        console.log(`Song exists: ${exists.title} [${(exists as any)._id}]`);
+        console.log(`Song exists: ${exists.title} [${(exists as any)?._id}]`);
         // continue;
       }
-      song.author = (author as any)._id;
+      song.author = (author as any)?._id;
 
-      song.category = (category as any)._id;
+      song.category = (category as any)?._id;
       let res;
-      if (exists && (exists as any)?._id) {
-        res = await songsService.updateOne((exists as any)._id, song);
-      } else {
-        res = await songsService.create(song);
+      if (!dryRun) {
+        if (exists && (exists as any)?._id) {
+          res = await songsService.updateOne((exists as any)?._id, song);
+        } else {
+          res = await songsService.create(song);
+        }
+        await songsService.tts((res as any)?._id, null);
       }
-      await songsService.tts(null, (res as any)._id);
 
       console.log(song.title);
     } catch (err) {
@@ -67,13 +73,17 @@ let app: INestApplicationContext;
 
 function readFile() {
   const errors = [];
-  const file = fs.readFileSync('./tmp/import-franci.txt', {
+  const file = fs.readFileSync('tmp/import-mariborski-2.txt', {
     encoding: 'utf-8',
     flag: 'r',
   });
 
   const raw = file.split('%%%%');
   const songs = raw.map((s: any) => {
+    if (s.length === 0) {
+      return;
+    }
+
     try {
       const line = s.trim().split('\r\n');
       const author = line[1].trim().split(',');

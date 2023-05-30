@@ -1,11 +1,16 @@
-import { Injectable } from "@nestjs/common";
-import { Model } from "mongoose";
-import { Song, SongDocument } from "./songs.schema";
-import { InjectModel } from "@nestjs/mongoose";
-import { synthesizeSpeech } from "../../lib/tts";
-import { ObjectId } from "mongodb";
-import { Category, CategoryDocument } from "../categories/schemas/category.schema";
-import { Author, AuthorDocument } from "../author/author.schema";
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
+import { Song, SongDocument } from './songs.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { synthesizeSpeech } from '../../lib/tts';
+import { ObjectId } from 'mongodb';
+import {
+  Category,
+  CategoryDocument,
+} from '../categories/category.schema';
+import { Author, AuthorDocument } from '../author/author.schema';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class SongsService {
@@ -111,7 +116,7 @@ export class SongsService {
       .exec();
 
     object.title = data?.title;
-    // object.content = data?.content;
+    object.content = data?.content;
     object.contents = data?.contents;
     object.url = data?.url;
     if (data?.favourite) object.favourite = data?.favourite;
@@ -125,13 +130,11 @@ export class SongsService {
         _id: new ObjectId(data?.categoryId),
       });
     }
+    object.updatedAt = new Date();
 
     await object.save();
-    // await this.songModel
-    //   .updateOne({ _id: new ObjectId(id) }, { $set: object })
-    //   .exec();
 
-    return await this.findOne(new ObjectId(id));
+    return object;
   }
 
   async manageFavourites(id: string) {
@@ -143,14 +146,20 @@ export class SongsService {
 
     await object.save();
 
-    return await this.findOne(new ObjectId(id));
+    return object;
   }
 
-  async tts(songId?: string, options?: any) {
+  async tts(songId?: any, options?: any) {
     let text;
+    let filename;
     const song = await this.findOne(new ObjectId(songId));
-    const lang = options?.language || 'sl';
-    text = song.contents?.find((c) => c.language === lang)?.content;
+    if (options?.language && !!song?.contents[options?.language]) {
+      text = song.contents[options?.language];
+      filename = `song_${songId}_${options.language}.mp3`;
+    } else {
+      text = song?.content;
+      filename = `song_${songId}.mp3`;
+    }
 
     text = text.replace(/<br>/g, ', ');
     text = text.replace(/[óòô]/g, 'o');
@@ -161,7 +170,20 @@ export class SongsService {
 
     return synthesizeSpeech(text, {
       options,
-      filename: `song_${songId}_${lang}.mp3`,
+      filename,
     });
+  }
+
+  ttsExists(songId?: any, options?: any) {
+    let filename;
+    if (options?.language) {
+      filename = `assets/song_${songId}_${options.language}.mp3`;
+    } else {
+      filename = `assets/song_${songId}.mp3`;
+    }
+
+    const fp = path.join(process.cwd(), filename);
+
+    return fs.existsSync(fp) && fs.statSync(fp)?.size > 0;
   }
 }

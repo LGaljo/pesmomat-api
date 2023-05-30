@@ -26,9 +26,9 @@ let app: INestApplicationContext;
     flag: 'r',
   });
 
-  // for (const category of JSON.parse(categories)) {
-  //   await categoryService.create(category);
-  // }
+  for (const category of JSON.parse(categories)) {
+    await categoryService.create(category);
+  }
 
   for (const author of JSON.parse(authors)) {
     author.category = author.category._id;
