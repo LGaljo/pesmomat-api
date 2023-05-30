@@ -6,8 +6,9 @@ import { Song, SongsSchema } from './songs.schema';
 import {
   CategoriesSchema,
   Category,
-} from '../categories/schemas/category.schema';
+} from '../categories/category.schema';
 import { Author, AuthorSchema } from '../author/author.schema';
+import { SyncService } from './sync.service';
 
 @Module({
   imports: [
@@ -17,8 +18,8 @@ import { Author, AuthorSchema } from '../author/author.schema';
       { name: Author.name, schema: AuthorSchema },
     ]),
   ],
-  providers: [SongsService],
+  providers: [SongsService, SyncService],
   controllers: [SongsController],
-  exports: [SongsService],
+  exports: [SongsService, SyncService],
 })
 export class SongsModule {}

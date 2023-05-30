@@ -7,7 +7,7 @@ import { Song, SongDocument } from '../songs/songs.schema';
 import {
   Category,
   CategoryDocument,
-} from '../categories/schemas/category.schema';
+} from '../categories/category.schema';
 
 @Injectable()
 export class AuthorService {
@@ -42,6 +42,7 @@ export class AuthorService {
         _id: new ObjectId(data?.categoryId),
       });
     }
+    object.updatedAt = new Date();
 
     return this.authorModel
       .updateOne({ _id: new ObjectId(id) }, { $set: object })

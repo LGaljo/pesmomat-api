@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Category } from '../categories/schemas/category.schema';
+import { Category } from '../categories/category.schema';
 import { Author } from '../author/author.schema';
 import { ObjectId } from 'mongodb';
 
@@ -35,7 +35,7 @@ export class Song {
   createdAt: Date;
 
   @Prop({ default: new Date() })
-  published: Date;
+  updatedAt: Date;
 
   @Prop()
   deletedAt: Date;

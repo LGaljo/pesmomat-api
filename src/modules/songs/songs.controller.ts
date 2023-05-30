@@ -73,7 +73,7 @@ export class SongsController {
     if (!fs.existsSync(fp)) {
       console.log('Create tts sample');
       if (await this.songsService.exists(params.id)) {
-        await this.songsService.tts(null, params.id);
+        await this.songsService.tts(params.id, null);
       }
     }
 

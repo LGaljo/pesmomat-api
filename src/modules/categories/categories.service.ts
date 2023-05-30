@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Category, CategoryDocument } from './schemas/category.schema';
+import { Category, CategoryDocument } from './category.schema';
 import { ObjectId } from 'mongodb';
 import { Song, SongDocument } from '../songs/songs.schema';
 

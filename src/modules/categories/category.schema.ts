@@ -9,6 +9,12 @@ export class Category {
 
   @Prop()
   deletedAt: Date;
+
+  @Prop({ default: new Date() })
+  createdAt: Date;
+
+  @Prop({ default: new Date() })
+  updatedAt: Date;
 }
 
 export const CategoriesSchema = SchemaFactory.createForClass(Category);

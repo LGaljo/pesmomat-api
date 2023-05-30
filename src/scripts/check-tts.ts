@@ -30,7 +30,7 @@ let app: INestApplicationContext;
   for (const song of checked) {
     try {
       console.log('Create tts sample for ' + song.title);
-      await songsService.tts(null, (song as any)._id);
+      await songsService.tts((song as any)._id, null);
     } catch (err) {
       console.error(err);
       errors.push({ name: song.title, id: (song as any)._id });
