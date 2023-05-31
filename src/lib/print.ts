@@ -4,7 +4,7 @@ import {
   printer as ThermalPrinter,
   types as PrinterTypes,
 } from 'node-thermal-printer';
-import * as prt from 'printer';
+import * as prt from '@damonsmith/node-printer';
 import { env } from '../config/env';
 
 export async function printThermalPrinter(song: Song) {
