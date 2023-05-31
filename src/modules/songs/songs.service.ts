@@ -4,10 +4,7 @@ import { Song, SongDocument } from './songs.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { synthesizeSpeech } from '../../lib/tts';
 import { ObjectId } from 'mongodb';
-import {
-  Category,
-  CategoryDocument,
-} from '../categories/category.schema';
+import { Category, CategoryDocument } from '../categories/category.schema';
 import { Author, AuthorDocument } from '../author/author.schema';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -154,7 +151,7 @@ export class SongsService {
     let filename;
     const song = await this.findOne(new ObjectId(songId));
     if (options?.language && !!song?.contents[options?.language]) {
-      text = song.contents[options?.language];
+      text = song.contents[options?.language]?.content;
       filename = `song_${songId}_${options.language}.mp3`;
     } else {
       text = song?.content;
