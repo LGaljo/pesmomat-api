@@ -14,10 +14,19 @@ import { SongsModule } from './modules/songs/songs.module';
 import { TokensModule } from './modules/tokens/tokens.module';
 import { AuthorModule } from './modules/author/author.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     MongooseModule.forRoot(env.MONGO_URI),
+    UserModule,
+    AuthModule,
+    JwtModule.register({
+      secret: env.JWT_SECRET,
+      signOptions: { expiresIn: '48h' },
+    }),
     SongsModule,
     RaspberrypiModule,
     ScheduleModule.forRoot(),
