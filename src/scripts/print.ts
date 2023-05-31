@@ -3,6 +3,7 @@ import {
   printer as ThermalPrinter,
   types as PrinterTypes,
 } from 'node-thermal-printer';
+import * as prt from '@damonsmith/node-printer';
 
 (async () => {
   const printerName = 'CUSTOM TG2480-H';
@@ -10,11 +11,11 @@ import {
     type: PrinterTypes.TGH,
     interface: 'printer:' + printerName,
     characterSet: CharacterSet.SLOVENIA,
-    driver: require('printer'),
+    driver: require('@damonsmith/node-printer'),
   });
 
-  // console.log(prt.getPrinters());
-  // console.log(prt.getPrinter(printerName));
+  console.log(prt.getPrinters());
+  console.log(prt.getPrinter(printerName));
 
   console.log(await printer.isPrinterConnected());
 

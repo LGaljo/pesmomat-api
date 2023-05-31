@@ -8,6 +8,7 @@ import {
   printer as ThermalPrinter,
   types as PrinterTypes,
 } from 'node-thermal-printer';
+import * as prt from '@damonsmith/node-printer';
 
 let app: INestApplicationContext;
 
@@ -20,11 +21,11 @@ let app: INestApplicationContext;
     type: PrinterTypes.TGH,
     interface: 'printer:' + printerName,
     characterSet: CharacterSet.SLOVENIA,
-    driver: require('printer'),
+    driver: require('@damonsmith/node-printer'),
   });
 
-  // console.log(prt.getPrinters());
-  // console.log(prt.getPrinter(printerName));
+  console.log(prt.getPrinters());
+  console.log(prt.getPrinter(printerName));
 
   console.log(await printer.isPrinterConnected());
 
