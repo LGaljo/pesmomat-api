@@ -80,7 +80,7 @@ export function generateActivationUrl(userId: string, email: string) {
   if (!token) {
     throw new BadRequestException('Token was not generated');
   }
-  return `${env.APP_URL}/registration/verify?token=${token}&userId=${userId}`;
+  return `${env.APP_URL}/auth/registration/verify?token=${token}&userId=${userId}`;
 }
 
 export function generateChangePasswordUrl(userId: string, email: string) {
@@ -92,5 +92,5 @@ export function generateChangePasswordUrl(userId: string, email: string) {
   if (!token) {
     throw new BadRequestException('Token was not generated');
   }
-  return `${env.APP_URL}/change-password?token=${token}&userId=${userId}`;
+  return `${env.APP_URL}/auth/change-password?token=${token}&userId=${userId}`;
 }

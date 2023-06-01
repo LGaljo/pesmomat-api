@@ -111,7 +111,7 @@ export class AuthController {
     };
     const template = MailTemplates.getTemplate('change-password');
     await sendMail({
-      from: `Špajza <${env.MAIL_ADDRESS}>`,
+      from: `Pesmomat <${env.MAIL_ADDRESS}>`,
       to: user.email,
       subject: 'Ponastavitev gesla',
       html: template(data),
