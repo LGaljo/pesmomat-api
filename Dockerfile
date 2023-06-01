@@ -1,32 +1,30 @@
 # Base image
-FROM node:18-alpine as builder
+FROM node:18 as builder
 
 WORKDIR /app
 
 COPY --chown=node:node . .
 
-RUN apk update && apk add build-base gcc wget git
-RUN apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
-# RUN python3 -m ensurepip
-# RUN pip3 install --no-cache --upgrade pip setuptools
+RUN apt update && apt install build-essential python3 libcups2-dev -y
 
-RUN npm ci --legacy-peer-deps
+RUN npm ci
 
 RUN npm run build
 
-FROM node:18-alpine
+FROM node:18-slim
 
 WORKDIR /app
 
+RUN apt update && apt install libcups2 -y
+
 COPY --from=builder --chown=node:node /app  .
+COPY --from=builder --chown=node:node /app/node_modules ./node_modules
 
 USER node
 
 ARG NODE_ENV=production
 ARG HOST=0.0.0.0
-#ARG PORT=3100
-#ARG API_URL=http://localhost:4500
 
-EXPOSE 4500
+EXPOSE 4400
 
 CMD ["npm", "run", "start:prod"]
