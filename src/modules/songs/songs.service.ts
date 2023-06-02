@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { Song, SongDocument } from './songs.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { synthesizeSpeech } from '../../lib/tts';
+import { synthesizeSpeech, synthesizeSpeechSlo } from '../../lib/tts';
 import { ObjectId } from 'mongodb';
 import {
   Category,
@@ -168,6 +168,11 @@ export class SongsService {
     text = text.replace(/[ìí]/g, 'i');
     text = text.replace(/[àá]/g, 'a');
     text = text.replace(/[úù]/g, 'u');
+
+    synthesizeSpeechSlo(text, {
+      options,
+      filename,
+    });
 
     return synthesizeSpeech(text, {
       options,

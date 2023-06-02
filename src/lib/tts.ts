@@ -76,3 +76,28 @@ export async function synthesizeSpeech(text: any, options?: any) {
     );
   });
 }
+
+export async function synthesizeSpeechSlo(text: any, options?: any) {
+    async function avaliableUsers(){
+      try {
+        const response = await fetch("http://35.204.0.77:50051//v1/available_voices()",{
+          method: 'GET',
+        });
+
+        if(!response.ok){
+          console.log(response.status);
+        }
+
+        const result = await response.json();
+
+        console.log(result);
+        return result;
+  
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    const users = avaliableUsers();
+    console.log(users);
+}
