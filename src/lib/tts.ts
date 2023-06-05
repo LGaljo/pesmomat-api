@@ -1,4 +1,5 @@
 import { env } from '../config/env';
+import fetch from 'node-fetch';
 import {
   AudioConfig,
   SpeechConfig,
@@ -78,26 +79,96 @@ export async function synthesizeSpeech(text: any, options?: any) {
 }
 
 export async function synthesizeSpeechSlo(text: any, options?: any) {
-    async function avaliableUsers(){
+  fetch('http://35.204.0.77:50051/token', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json'
+    },
+    body: new URLSearchParams({
+      'grant_type': '',
+      'username': 'beletrina',
+      'password': 'eknjiga',
+      'scope': '',
+      'client_id': '',
+      'client_secret': ''
+    })
+        
+  }).then((res)=>res.json())
+    .then((response) => {
+      
+
+      avaliableUsers(response.access_token)
+        .then((res)=>{
+          let users = []
+          if(res.voices.includes("ajda")) users.push("ajda");
+          if(res.voices.includes("ziga")) users.push("ziga");
+          
+          //implementiraj health check in tudi generacijo
+          generateTTS(users, response.access_token);
+          
+        })
+        
+      
+    })
+    .catch(error => {
+        console.log(error)
+    })
+
+
+
+
+    async function avaliableUsers(auth){
       try {
-        const response = await fetch("http://35.204.0.77:50051//v1/available_voices()",{
-          method: 'GET',
-        });
+        let response = await fetch("http://35.204.0.77:50051/v1/available_voices",{
+          method:'GET',
+          headers:{
+            'accept' : 'application/json',
+            'Authorization': 'Bearer ' + auth
+          },
+        })
 
-        if(!response.ok){
-          console.log(response.status);
-        }
+        let data = await response.json();
+        return data;
 
-        const result = await response.json();
+      } catch (error) {
+        console.log(error);
+      }
 
-        console.log(result);
-        return result;
-  
+      return {};
+    }
+
+    async function generateTTS(users, auth){
+      try {
+
+        let response = await fetch("http://35.204.0.77:50051/v1/speak",{
+          method:'POST',
+          headers:{
+            'accept' : 'application/json',
+            'Content-Type':'application/json',
+            'Authorization': 'Bearer ' + auth
+          },
+          body: JSON.stringify({
+            "userid": "beletrina",
+            "voice": users[0],
+            "input_text": text,
+            "normalize": false,
+            "accentuate": true,
+            "simple_accentuation": true,
+            "use_cache": true,
+            "pace": 1,
+            "tokenize": true,
+            "pause_for_spelling": 250
+          })
+        })
+        
+        let data = await response;
+        let audio = await data.buffer();
+        require("fs").writeFileSync("assets/slo/" + options?.filenameSlo || 'assets/output.wav', audio);
+
+
       } catch (error) {
         console.log(error);
       }
     }
-
-    const users = avaliableUsers();
-    console.log(users);
+    
 }

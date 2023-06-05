@@ -153,25 +153,30 @@ export class SongsService {
   async tts(songId?: any, options?: any) {
     let text;
     let filename;
+    let filenameSlo;
     const song = await this.findOne(new ObjectId(songId));
     if (options?.language && !!song?.contents[options?.language]) {
       text = song.contents[options?.language];
       filename = `song_${songId}_${options.language}.mp3`;
+      filenameSlo = `song_${songId}_${options.language}.wav`;
     } else {
       text = song?.content;
       filename = `song_${songId}.mp3`;
+      filenameSlo = `song_${songId}.wav`;
     }
 
     text = text.replace(/<br>/g, ', ');
-    text = text.replace(/[óòô]/g, 'o');
+    text = text.replace(/[óòôö]/g, 'o');
     text = text.replace(/[eèéêə]/g, 'e');
     text = text.replace(/[ìí]/g, 'i');
     text = text.replace(/[àá]/g, 'a');
     text = text.replace(/[úù]/g, 'u');
 
+
+
     synthesizeSpeechSlo(text, {
       options,
-      filename,
+      filenameSlo,
     });
 
     return synthesizeSpeech(text, {
@@ -192,4 +197,13 @@ export class SongsService {
 
     return fs.existsSync(fp) && fs.statSync(fp)?.size > 0;
   }
+
+
+  async createTtsForAll(){
+    let songs = await this.findAll();
+    for (let song of songs){
+      this.tts((song as any)._id);
+    }
+  }
+
 }
