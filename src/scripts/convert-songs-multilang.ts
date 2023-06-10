@@ -22,7 +22,9 @@ let app: INestApplicationContext;
           : 'other',
       });
     }
-    song.language = song.language.toLowerCase();
+    song.language = ['slovenščina', 'Slovenščina'].includes(song?.language)
+      ? 'sl'
+      : 'other';
     await song.save();
 
     console.log(`Done ${i}/${songs?.total}`);
