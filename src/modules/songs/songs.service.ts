@@ -35,6 +35,7 @@ export class SongsService {
 
   async findAll(limit = null, page = 0, filter?: any): Promise<any> {
     const params = { deletedAt: null };
+    let select = {};
     if (filter?.author) {
       params['author'] = new ObjectId(filter.author);
     }
@@ -47,6 +48,9 @@ export class SongsService {
     if (filter?.favourite) {
       params['favourite'] = true;
     }
+    if (filter?.noBody) {
+      select = { contents: 0 }
+    }
 
     return {
       items: await this.songModel
@@ -54,6 +58,7 @@ export class SongsService {
         .skip(limit * page)
         .limit(limit)
         .sort({ title: 1 })
+        .select(select)
         .populate('author')
         .populate('category')
         .exec(),

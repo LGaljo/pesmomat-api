@@ -12,7 +12,7 @@ export class UserController {
 
   @Get()
   @UseGuards(JwtAuthGuard)
-  public async getUsers(@Req() _request: IRequest): Promise<any> {
+  public async getUsers(): Promise<any> {
     return this.userService.findAll();
   }
 
@@ -57,7 +57,7 @@ export class UserController {
   @Put('/:id')
   @UseGuards(JwtAuthGuard)
   @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.USER)
   public async updateUser(@Req() request: IRequest): Promise<any> {
     const { body, params } = request;
 
@@ -67,7 +67,7 @@ export class UserController {
   @Put('/:id/role')
   @UseGuards(JwtAuthGuard)
   @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.USER)
   public async updateUserRole(@Req() request: IRequest): Promise<any> {
     const { body, params } = request;
 
@@ -77,7 +77,7 @@ export class UserController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.USER)
   public async deleteUser(@Req() request: IRequest): Promise<any> {
     const { context, params } = request;
 
