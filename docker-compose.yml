@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  pesmomat-api:
+    image: lgaljo/pesmomat-api:latest
+    container_name: pesmomat-api
+
+    ports:
+      - ${PORT:-3000}:${PORT:-3000}
+
+    depends_on:
+      - pesmomat-db
+
+    environment:
+      - DATABASE_URL=
+      - JWT_ACCESS_SECRET=
+      - JWT_REFRESH_SECRET=
+
+  pesmomat-app:
+    image: lgaljo/pesmomat-app:latest
+    container_name: pesmomat-app
+    restart: unless-stopped
+
+    ports:
+      - 3200:3200
+
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3200
+      API_URL: 
+      NODE_ENV: production
+
+  pesmomat-db:
+    image: mangodb:16-alpine
+    container_name: pesmomat-db
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-U", "dbuser" ]
+
+    ports:
+       - 5433:5432
+
+    environment:
+      MONGO_INITDB_ARGS: "--locale-provider=icu --icu-locale=sl-SI"
+      LANG: sl_SI.utf8
+      TZ: 'Europe/Ljubljana'
+      MONGO_USER: 
+      MONGO_PASSWORD: 
+      MONGO_DB:
+
+    volumes:
+      - mongo:/var/lib/mongodb/data
+
+  volumes:
+    mongo:
+      name: pesmomat-db
