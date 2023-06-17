@@ -3,6 +3,8 @@ services:
   pesmomat-api:
     image: lgaljo/pesmomat-api:latest
     container_name: pesmomat-api
+    secrets:
+      - pesmi_api
     ports:
       - ${PORT:-3000}:${PORT:-3000}
     depends_on:
@@ -26,6 +28,9 @@ services:
     image: mongo
     container_name: pesmomat-db
     restart: unless-stopped
+    secrets:
+      - db_root_pass
+      - db_pass
     healthcheck:
       test:
         - CMD
@@ -48,3 +53,11 @@ volumes:
   mongo:
     name: pesmomat-db
 
+secrets:
+  pesmi_api:
+    file: ./pesmi_api.txt
+  db_root_pass:
+    file: ./db_root_pass.txt
+  db_pass:
+    file: ./db_pass.txt
+  
