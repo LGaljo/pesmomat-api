@@ -1,15 +1,17 @@
+---
 version: "3.8"
 services:
   pesmomat-api:
     image: lgaljo/pesmomat-api:latest
     container_name: pesmomat-api
     secrets:
-      - pesmi_api
+      - pesmi
     ports:
       - ${PORT:-3000}:${PORT:-3000}
     depends_on:
       - pesmomat-db
     environment:
+      - API_PASSWORD= "/run/secret/pesmi"
       - DATABASE_URL=
       - JWT_ACCESS_SECRET=
       - JWT_REFRESH_SECRET=
@@ -24,13 +26,13 @@ services:
       PORT: 3200
       API_URL: null
       NODE_ENV: production
+      APP_PASSWORD: /run/secret/pesmi
   pesmomat-db:
     image: mongo
     container_name: pesmomat-db
     restart: unless-stopped
     secrets:
-      - db_root_pass
-      - db_pass
+      - pesmi
     healthcheck:
       test:
         - CMD
@@ -43,7 +45,10 @@ services:
     environment:
       - MONGO_INITDB_DATABASE=
       - MONGO_INITDB_ROOT_USERNAME=
-      - MONGO_INITDB_ROOT_PASSWORD=
+      - MONGO_INITDB_ROOT_PASSWORD= "/run/secrets/pesmi"
+      - MONGO_ROOT_PASSOWORD_FILE= "/run/secrets/pesmi"
+      - MONGO_PASSWORD_FILE= "/run/secrets/pesmi"
+      - MONGO_DB_PASSWORD_FILE= "/run/secrets/pesmi"
       - MONGO_INITDB_ARGS= "--locale-provider=icu --icu-locale=sl-SI"
       - TZ= "Europe/Ljubljana"
       - LANG= "sl_SI.utf8"
@@ -52,12 +57,7 @@ services:
 volumes:
   mongo:
     name: pesmomat-db
-
 secrets:
-  pesmi_api:
-    file: ./pesmi_api.txt
-  db_root_pass:
-    file: ./db_root_pass.txt
-  db_pass:
-    file: ./db_pass.txt
-  
+  pesmi:
+    file: pesmi.txt
+
