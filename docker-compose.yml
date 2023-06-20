@@ -1,63 +1,54 @@
----
 version: "3.8"
+
 services:
   pesmomat-api:
     image: lgaljo/pesmomat-api:latest
     container_name: pesmomat-api
-    secrets:
-      - pesmi
     ports:
-      - ${PORT:-3000}:${PORT:-3000}
+      - 4400:4400
     depends_on:
       - pesmomat-db
     environment:
-      - API_PASSWORD= "/run/secret/pesmi"
-      - DATABASE_URL=
-      - JWT_ACCESS_SECRET=
-      - JWT_REFRESH_SECRET=
+      - API_PORT=4400
+      - API_HOST=0.0.0.0
+      - MONGO_URI=mongodb://pesnik:poezijajezakon@pesmomat-db:27017/pesmomat?authSource=admin
+      - SYNC_ENABLED=false
+      - JWT_SECRET="skrivnost1"
+      - SALT_ROUNDS=10
+      - MAIL_SENDER_NAME=
+      - MAIL_PASSWORD=
+      - MAIL_ADDRESS=
+      - MAIL_PORT=
+      - MAIL_HOST=
+
   pesmomat-app:
     image: lgaljo/pesmomat-app:latest
     container_name: pesmomat-app
     restart: unless-stopped
     ports:
-      - 3200:3200
+      - 4000:4000
     environment:
       HOST: 0.0.0.0
-      PORT: 3200
-      API_URL: null
+      PORT: 4000
+      API_URL: http://192.168.34.10:4400
       NODE_ENV: production
-      APP_PASSWORD: /run/secret/pesmi
+
   pesmomat-db:
-    image: mongo
+    image: mongo:4
     container_name: pesmomat-db
     restart: unless-stopped
-    secrets:
-      - pesmi
-    healthcheck:
-      test:
-        - CMD
-        - pg_isready
-        - -q
-        - -U
-        - dbuser
     ports:
-      - 5433:5432
+      - 27017:27017
     environment:
-      - MONGO_INITDB_DATABASE=
-      - MONGO_INITDB_ROOT_USERNAME=
-      - MONGO_INITDB_ROOT_PASSWORD= "/run/secrets/pesmi"
-      - MONGO_ROOT_PASSOWORD_FILE= "/run/secrets/pesmi"
-      - MONGO_PASSWORD_FILE= "/run/secrets/pesmi"
-      - MONGO_DB_PASSWORD_FILE= "/run/secrets/pesmi"
+      - MONGO_INITDB_DATABASE="pesmomat"
+      - MONGO_INITDB_ROOT_USERNAME="pesnik"
+      - MONGO_INITDB_ROOT_PASSWORD="poezijajezakon"
       - MONGO_INITDB_ARGS= "--locale-provider=icu --icu-locale=sl-SI"
       - TZ= "Europe/Ljubljana"
       - LANG= "sl_SI.utf8"
     volumes:
       - mongo:/var/lib/mongodb/data
+      
 volumes:
   mongo:
     name: pesmomat-db
-secrets:
-  pesmi:
-    file: pesmi.txt
-
