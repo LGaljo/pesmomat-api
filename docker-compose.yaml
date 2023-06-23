@@ -1,0 +1,58 @@
+version: "3.8"
+
+# TODO: Insert secrets to the empty variables and MONGO_URI
+
+services:
+  pesmomat-api:
+    image: lgaljo/pesmomat-api:latest
+    container_name: pesmomat-api
+    restart: unless-stopped
+    ports:
+      - 4400:4400
+    depends_on:
+      - pesmomat-db
+    environment:
+      - API_PORT=4400
+      - API_HOST=0.0.0.0
+      - MONGO_URI=mongodb://_:_@pesmomat-db:27017/pesmomat?authSource=admin
+      - MONGO_URI2=
+      - SYNC_ENABLED=false
+      - JWT_SECRET=_
+      - SALT_ROUNDS=10
+      - MAIL_SENDER_NAME=
+      - MAIL_PASSWORD=
+      - MAIL_ADDRESS=
+      - MAIL_PORT=
+      - MAIL_HOST=
+
+  pesmomat-app:
+    image: lgaljo/pesmomat-app:latest
+    container_name: pesmomat-app
+    restart: unless-stopped
+    ports:
+      - 4000:4000
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4000
+      API_URL: http://rainbow.fri.uni-lj.si/api
+      NODE_ENV: production
+
+  pesmomat-db:
+    image: mongo:4
+    container_name: pesmomat-db
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=pesmomat
+      - MONGO_INITDB_ROOT_USERNAME=
+      - MONGO_INITDB_ROOT_PASSWORD=
+      - MONGO_INITDB_ARGS= "--locale-provider=icu --icu-locale=sl-SI"
+      - TZ= "Europe/Ljubljana"
+      - LANG= "sl_SI.utf8"
+    volumes:
+      - mongo:/var/lib/mongodb/data
+
+volumes:
+  mongo:
+    name: pesmomat-db
