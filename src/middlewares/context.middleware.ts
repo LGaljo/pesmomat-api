@@ -2,9 +2,13 @@ import type { Request } from 'express';
 import { Context } from '../context';
 import { env } from '../config/env';
 import { Injectable, NestMiddleware } from '@nestjs/common';
+import { UserService } from '../modules/user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { UserDocument } from '../modules/user/schemas/user.schema';
 
 export interface IRequest extends Request {
   context: Context;
+  user: UserDocument;
   query: { [key: string]: undefined | string };
 }
 
@@ -13,8 +17,23 @@ export interface IRequest extends Request {
  */
 @Injectable()
 export class ContextMiddleware implements NestMiddleware {
-  use(req, res, next) {
-    req.context = new Context(env);
+  constructor(
+    private readonly usersService: UserService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async use(req, res, next) {
+    let user = null;
+    try {
+      if (req?.headers?.authorization) {
+        const payload: any = this.jwtService.decode(req?.headers?.authorization.split(' ')[1]);
+        user = await this.usersService.findOneById(payload?.userId);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+
+    req.context = new Context(env, user);
     next();
   }
 }

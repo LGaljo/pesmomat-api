@@ -7,35 +7,33 @@ import {
 } from 'microsoft-cognitiveservices-speech-sdk';
 
 export const languages = {
-  at: {
-    code: 'de-AT',
-    voice: { male: 'de-AT-JonasNeural', female: 'de-AT-IngridNeural' },
-  },
-  en_us: {
-    code: 'en-US',
-    voice: { male: 'en-US-BrandonNeural', female: 'en-US-AmberNeural' },
-  },
   en_gb: {
+    shortcode: 'en',
     code: 'en-GB',
     voice: { male: 'en-US-BrandonNeural', female: 'en-US-AmberNeural' },
   },
   hr: {
+    shortcode: 'hr',
     code: 'hr-HR',
     voice: { male: 'hr-HR-SreckoNeural', female: 'hr-HR-GabrijelaNeural' },
   },
   hu: {
+    shortcode: 'hu',
     code: 'hu-HU',
     voice: { male: 'hu-HU-TamasNeural', female: 'hu-HU-NoemiNeural' },
   },
   sl: {
+    shortcode: 'sl',
     code: 'sl-SI',
     voice: { male: 'sl-SI-RokNeural', female: 'sl-SI-PetraNeural' },
   },
   it: {
+    shortcode: 'it',
     code: 'it-IT',
     voice: { male: 'it-IT-BenignoNeural', female: 'it-IT-ElsaNeural' },
   },
   de: {
+    shortcode: 'de',
     code: 'de-DE',
     voice: { male: 'de-DE-BerndNeural', female: 'de-DE-AmalaNeural' },
   },

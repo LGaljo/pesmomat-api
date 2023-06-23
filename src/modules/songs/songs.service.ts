@@ -4,10 +4,7 @@ import { Song, SongDocument } from './songs.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { synthesizeSpeech } from '../../lib/tts';
 import { ObjectId } from 'mongodb';
-import {
-  Category,
-  CategoryDocument,
-} from '../categories/category.schema';
+import { Category, CategoryDocument } from '../categories/category.schema';
 import { Author, AuthorDocument } from '../author/author.schema';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -32,16 +29,13 @@ export class SongsService {
         _id: new ObjectId(object?.category),
       });
     }
-    const res = await createdSong.save();
+    await createdSong.save();
     return createdSong;
   }
 
-  async findAll(
-    limit = 15,
-    skip: number = null,
-    filter?: any,
-  ): Promise<SongDocument[]> {
+  async findAll(limit = null, page = 0, filter?: any): Promise<any> {
     const params = { deletedAt: null };
+    let select = {};
     if (filter?.author) {
       params['author'] = new ObjectId(filter.author);
     }
@@ -54,15 +48,22 @@ export class SongsService {
     if (filter?.favourite) {
       params['favourite'] = true;
     }
+    if (filter?.noBody) {
+      select = { contents: 0 }
+    }
 
-    return await this.songModel
-      .find(params)
-      .skip(skip)
-      // .limit(limit)
-      .sort({ title: 1 })
-      .populate('author')
-      .populate('category')
-      .exec();
+    return {
+      items: await this.songModel
+        .find(params)
+        .skip(limit * page)
+        .limit(limit)
+        .sort({ title: 1 })
+        .select(select)
+        .populate('author')
+        .populate('category')
+        .exec(),
+      total: await this.songModel.find(params).count().exec(),
+    };
   }
 
   async findOne(id: ObjectId): Promise<SongDocument> {
@@ -155,7 +156,7 @@ export class SongsService {
     let filename;
     const song = await this.findOne(new ObjectId(songId));
     if (options?.language && !!song?.contents[options?.language]) {
-      text = song.contents[options?.language];
+      text = song.contents[options?.language]?.content;
       filename = `song_${songId}_${options.language}.mp3`;
     } else {
       text = song?.content;
