@@ -38,7 +38,12 @@ sudo systemctl enable mongodb.service
 ```
 
 
-## Installation
+## Installation (Linux - Ubuntu)
+Install prerequisite libraries to be able to install it.
+```bash
+$ curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
+$ sudo apt install build-essential libcups2-dev nodejs -y
+```
 
 ```bash
 $ git clone https://github.com/LGaljo/pesmomat-api
