@@ -8,6 +8,7 @@ import { Category, CategoryDocument } from '../categories/category.schema';
 import { Author, AuthorDocument } from '../author/author.schema';
 import * as fs from 'fs';
 import * as path from 'path';
+import { toNgrams } from '../../lib/utils';
 
 @Injectable()
 export class SongsService {
@@ -29,12 +30,14 @@ export class SongsService {
         _id: new ObjectId(object?.category),
       });
     }
+    object.ngrams = toNgrams(object.title);
     await createdSong.save();
     return createdSong;
   }
 
   async findAll(limit = null, page = 0, filter?: any): Promise<any> {
     const params = { deletedAt: null };
+    const sort: any = { title: 1 };
     let select = {};
     if (filter?.author) {
       params['author'] = new ObjectId(filter.author);
@@ -48,8 +51,13 @@ export class SongsService {
     if (filter?.favourite) {
       params['favourite'] = true;
     }
+    if (filter?.search) {
+      // Search by ngrams
+      params['$text'] = { $search: filter?.search };
+      sort['score'] = { $meta: 'textScore' };
+    }
     if (filter?.noBody) {
-      select = { contents: 0 }
+      select = { contents: 0 };
     }
 
     return {
@@ -57,7 +65,7 @@ export class SongsService {
         .find(params)
         .skip(limit * page)
         .limit(limit)
-        .sort({ title: 1 })
+        .sort(sort)
         .select(select)
         .populate('author')
         .populate('category')

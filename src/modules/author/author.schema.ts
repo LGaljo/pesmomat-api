@@ -12,6 +12,9 @@ export class Author {
   @Prop()
   lastName: string;
 
+  @Prop()
+  ngrams: string;
+
   @Prop({ type: ObjectId, ref: 'Category' })
   category: Category;
 

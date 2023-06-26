@@ -8,8 +8,9 @@ import {
   Put,
   Req,
   Res,
-  StreamableFile, UseGuards
-} from "@nestjs/common";
+  StreamableFile,
+  UseGuards,
+} from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { IRequest } from '../../middlewares/context.middleware';
 import { createReadStream } from 'fs';
@@ -17,10 +18,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { ObjectId } from 'mongodb';
 import { languages } from '../../lib/tts';
-import { JwtAuthGuard } from "../../guards/jwt-auth.guard";
-import { RolesGuard } from "../../guards/roles.guard";
-import { Roles } from "../../guards/roles.decorator";
-import { Role } from "../user/schemas/roles.enum";
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { RolesGuard } from '../../guards/roles.guard';
+import { Roles } from '../../guards/roles.decorator';
+import { Role } from '../user/schemas/roles.enum';
 
 @Controller('songs')
 export class SongsController {
@@ -37,7 +38,7 @@ export class SongsController {
   }
 
   @Get('languages')
-  public async getLanguages(@Req() request: IRequest): Promise<any> {
+  public async getLanguages(): Promise<any> {
     return languages;
   }
 

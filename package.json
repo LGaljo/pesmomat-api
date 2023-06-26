@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@damonsmith/node-printer": "^0.7.1",
     "@nestjs/common": "^9.2.1",
     "@nestjs/core": "^9.2.1",
     "@nestjs/jwt": "^10.0.3",
@@ -36,13 +37,13 @@
     "helmet": "^4.6.0",
     "microsoft-cognitiveservices-speech-sdk": "^1.25.0",
     "mongoose": "^6.9.0",
+    "ngramable": "^0.2.1",
     "node-thermal-printer": "github:LGaljo/node-thermal-printer",
     "nodemailer": "^6.9.1",
     "onoff": "^6.0.3",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
-    "@damonsmith/node-printer": "^0.7.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^4.1.2",
     "rxjs": "^7.8.0",
