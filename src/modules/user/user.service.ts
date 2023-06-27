@@ -7,7 +7,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { Role } from './schemas/roles.enum';
-import { AuthService } from '../auth/auth.service';
 import { generateActivationUrl } from '../../lib/jwt';
 import { MailTemplates } from '../../lib/mail-templates';
 import { sendMail } from '../../lib/smtp';
@@ -17,13 +16,17 @@ import { Context } from '../../context';
 export class UserService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async create(createDto: any): Promise<UserDocument> {
+  async create(createDto: any, verified = false): Promise<UserDocument> {
     const createdUser = new this.userModel(createDto);
     createdUser.hash = await bcrypt.hash(createDto.password, env.SALT_ROUNDS);
     createdUser.salt = env.SALT_ROUNDS;
     await createdUser.save();
 
-    await this.resendVerification(createdUser.id);
+    if (verified) {
+      await this.updateRole(createdUser?._id?.toHexString(), Role.USER);
+    } else {
+      await this.resendVerification(createdUser.id);
+    }
 
     delete createdUser.hash;
     delete createdUser.salt;
@@ -118,7 +121,7 @@ export class UserService {
     await sendMail({
       from: `Pesmomat <${env.MAIL_ADDRESS}>`,
       to: user.email,
-      subject: 'Registracija v Špajzo',
+      subject: 'Registracija v Pesmomat',
       html: template(data),
     });
   }
