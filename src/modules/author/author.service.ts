@@ -4,10 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Author, AuthorDocument } from './author.schema';
 import { Song, SongDocument } from '../songs/songs.schema';
-import {
-  Category,
-  CategoryDocument,
-} from '../categories/category.schema';
+import { Category, CategoryDocument } from '../categories/category.schema';
+import { toNgrams } from '../../lib/utils';
 
 @Injectable()
 export class AuthorService {
@@ -24,6 +22,7 @@ export class AuthorService {
         _id: new ObjectId(object?.category),
       });
     }
+    object.ngrams = toNgrams([object.firstName, object.lastName].join(' '));
 
     await createdAuthor.save();
     return createdAuthor;
@@ -49,7 +48,7 @@ export class AuthorService {
       .exec();
   }
 
-  async findAll(filter?: any): Promise<AuthorDocument[]> {
+  async findAll(filter?: any): Promise<any[]> {
     const params = { deletedAt: null };
     if (filter?.period) {
       params['category'] = new ObjectId(filter.period);
@@ -60,7 +59,7 @@ export class AuthorService {
 
     return this.authorModel
       .find(params)
-      .sort({ name: 1 })
+      .sort({ lastName: 1 })
       .populate('category')
       .exec();
   }

@@ -18,8 +18,10 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
   },
+  "include": ["src/**/*", "test/**/*.ts"],
   "exclude": [
     "tmp",
-    "dist"
+    "dist",
+    "assets"
   ]
 }

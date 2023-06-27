@@ -10,6 +10,9 @@ export class Song {
   @Prop()
   title: string;
 
+  @Prop()
+  ngrams: string;
+
   @Prop({ type: ObjectId, ref: 'Author' })
   author: Author;
 

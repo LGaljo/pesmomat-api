@@ -9,6 +9,7 @@ import {
   Req,
   Res,
   StreamableFile,
+  UseGuards,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { IRequest } from '../../middlewares/context.middleware';
@@ -17,6 +18,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { ObjectId } from 'mongodb';
 import { languages } from '../../lib/tts';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { RolesGuard } from '../../guards/roles.guard';
+import { Roles } from '../../guards/roles.decorator';
+import { Role } from '../user/schemas/roles.enum';
 
 @Controller('songs')
 export class SongsController {
@@ -24,16 +29,16 @@ export class SongsController {
 
   @Get()
   public async getSongs(@Req() request: IRequest): Promise<any> {
-    const { params } = request;
+    const { query } = request;
 
-    const limit = Number(params?.limit) || 15;
-    const skip = Number(params?.skip) || null;
+    const limit = Number(query?.limit) || 25;
+    const page = Number(query?.page) - 1 || null;
 
-    return this.songsService.findAll(limit, skip, request?.query);
+    return this.songsService.findAll(limit, page, request?.query);
   }
 
   @Get('languages')
-  public async getLanguages(@Req() request: IRequest): Promise<any> {
+  public async getLanguages(): Promise<any> {
     return languages;
   }
 
@@ -46,12 +51,18 @@ export class SongsController {
     return this.songsService.findOne(new ObjectId(params?.id));
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles(Role.USER)
   @Put(':id')
   public async updateSong(@Req() request: IRequest): Promise<any> {
     const { body, params } = request;
     return this.songsService.updateOne(params?.id, body);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles(Role.USER)
   @Post('favourite/:id')
   public async manageFavourites(@Req() request: IRequest): Promise<any> {
     const { params } = request;
@@ -87,13 +98,18 @@ export class SongsController {
     return new StreamableFile(file);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles(Role.USER)
   @Post()
   public async createSong(@Req() request: IRequest): Promise<any> {
     const { body } = request;
-    return;
-    // return this.songsService.create(body);
+    return this.songsService.create(body);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles(Role.USER)
   @Post('tts/:id')
   public async createTTS(@Req() request: IRequest): Promise<any> {
     const { body, params } = request;
@@ -101,6 +117,9 @@ export class SongsController {
     return await this.songsService.tts(params?.id, body?.options);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @UseGuards(RolesGuard)
+  @Roles(Role.USER)
   @Delete(':id')
   public async deleteOne(@Param('id') id: string) {
     return this.songsService.deleteOne(id);
