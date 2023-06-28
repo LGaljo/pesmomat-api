@@ -71,10 +71,10 @@ export class SongsController {
 
     const fp = path.join(process.cwd(), `assets/song_${params.id}.mp3`);
     if (!fs.existsSync(fp)) {
-      /*console.log('Create tts sample');
-      if (await this.songsService.exists(params.id)) {
-        await this.songsService.tts(params.id, null);
-      }*/
+      //console.log('Create tts sample');
+      //if (await this.songsService.exists(params.id)) {
+      //  await this.songsService.tts(params.id, null);
+      //}
       console.log('Create tts for all');
       await this.songsService.createTtsForAll();
     }

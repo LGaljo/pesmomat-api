@@ -42,6 +42,8 @@ export const languages = {
   },
 };
 
+var token = "";
+
 export async function synthesizeSpeech(text: any, options?: any) {
   const speechConfig = SpeechConfig.fromSubscription(
     env.AZURE_API_KEY,
@@ -79,40 +81,57 @@ export async function synthesizeSpeech(text: any, options?: any) {
 }
 
 export async function synthesizeSpeechSlo(text: any, options?: any) {
-  fetch('http://35.204.0.77:50051/token', {
-    method: 'POST',
-    headers: {
-      'accept': 'application/json'
-    },
-    body: new URLSearchParams({
-      'grant_type': '',
-      'username': 'beletrina',
-      'password': 'eknjiga',
-      'scope': '',
-      'client_id': '',
-      'client_secret': ''
-    })
-        
-  }).then((res)=>res.json())
-    .then((response) => {
-      
+  let users = ["ajda","ziga"];
 
-      avaliableUsers(response.access_token)
-        .then((res)=>{
-          let users = []
-          if(res.voices.includes("ajda")) users.push("ajda");
-          if(res.voices.includes("ziga")) users.push("ziga");
+  if(token == "") {
+    fetch('http://35.204.0.77:50051/token', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json'
+      },
+      body: new URLSearchParams({
+        'grant_type': '',
+        'username': 'beletrina',
+        'password': 'eknjiga',
+        'scope': '',
+        'client_id': '',
+        'client_secret': ''
+      })
           
-          //implementiraj health check in tudi generacijo
-          generateTTS(users, response.access_token);
-          
-        })
+    }).then((res)=>res.json())
+      .then((response) => {
         
+        token = response.access_token;
+        /*avaliableUsers(response.access_token)
+          .then((res)=>{
+            let users = []
+            if(res.voices.includes("ajda")) users.push("ajda");
+            if(res.voices.includes("ziga")) users.push("ziga");
+            
+            //implementiraj health check in tudi generacijo
+            iterateText(users[0], response.access_token)
+              .then((res)=>{
+                iterateText(users[1], response.access_token)
+              })
+          })*/
+
+          //implementiraj health check in tudi generacijo
+          iterateText(users[1], token)
+          .then((res)=>{
+            
+          })
+          
+        
+      })
+      .catch(error => {
+          console.log(error)
+      })
+  } else {
+    iterateText(users[1], token)
+      .then((res)=>{
       
     })
-    .catch(error => {
-        console.log(error)
-    })
+  }
 
 
 
@@ -137,7 +156,7 @@ export async function synthesizeSpeechSlo(text: any, options?: any) {
       return {};
     }
 
-    async function generateTTS(users, auth){
+    async function generateTTS(users, auth, stavek){
       try {
 
         let response = await fetch("http://35.204.0.77:50051/v1/speak",{
@@ -149,26 +168,77 @@ export async function synthesizeSpeechSlo(text: any, options?: any) {
           },
           body: JSON.stringify({
             "userid": "beletrina",
-            "voice": users[0],
-            "input_text": text,
-            "normalize": false,
+            "voice": users,
+            "input_text": stavek,
+            "normalize": true,
             "accentuate": true,
-            "simple_accentuation": true,
+            "simple_accentuation": false,
             "use_cache": true,
             "pace": 1,
             "tokenize": true,
             "pause_for_spelling": 250
           })
         })
-        
+      
         let data = await response;
         let audio = await data.buffer();
-        require("fs").writeFileSync("assets/slo/" + options?.filenameSlo || 'assets/output.wav', audio);
+        return audio;
 
 
       } catch (error) {
         console.log(error);
       }
+    }
+
+    async function iterateText(users, auth){
+
+      let audio = Buffer.alloc(0);
+
+      for (let i = 0; i < text.length; i++){
+        await new Promise(resolve => setTimeout(resolve, 1000));
+          await generateTTS(users, auth, text[i])
+          .then((res)=>{
+            if(i == 0 || audio.length < 44) audio = res
+            else if( res.length >= 44) audio = combineWavBuffers(audio, res);
+          })
+        
+      }
+      require("fs").writeFileSync("assets/slo/"+ users + "/" + options?.filenameSlo || 'assets/output.wav', audio);
+
+      return ;
+    }
+
+    function combineWavBuffers(buffer1: Buffer, buffer2: Buffer): Buffer {
+    
+    
+      //const headerSizes = buffer1.readUInt32LE(16);
+      const headerSize = 44
+
+      const audioData1 = buffer1.subarray(44);
+    
+      const audioData2 = buffer2.subarray(44);
+    
+      const totalLen = audioData1.length + audioData2.length;
+
+      const combinedBuffer = Buffer.alloc(headerSize + totalLen);
+  
+      buffer1.copy(combinedBuffer, 0, 0, headerSize);
+    
+      combinedBuffer.writeUInt32LE(totalLen, 40);
+    
+        // Copy the combined audio data to the combined buffer
+      audioData1.copy(combinedBuffer, 44);
+
+      combinedBuffer.fill(0, 44 + audioData1.length, 44 + audioData1.length);
+
+      // Copy the audio data from the second buffer
+      audioData2.copy(combinedBuffer, 44 + audioData1.length);
+
+
+     // audioData2.copy(combinedBuffer, 44 + audioData1.length);
+
+    
+      return combinedBuffer;
     }
     
 }

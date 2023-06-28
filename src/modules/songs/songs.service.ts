@@ -165,32 +165,35 @@ export class SongsService {
       filenameSlo = `song_${songId}.wav`;
     }
 
-    text = text.replace(/<br>/g, ', ');
-    text = text.replace(/[óòôö]/g, 'o');
-    text = text.replace(/[eèéêə]/g, 'e');
-    text = text.replace(/[ìí]/g, 'i');
-    text = text.replace(/[àá]/g, 'a');
-    text = text.replace(/[úù]/g, 'u');
+    text = text.replace(/<br>/g, '!');
+    //text = text.replace(/[óòôö]/g, 'o');
+    //text = text.replace(/[eèéêə]/g, 'e');
+    //text = text.replace(/[ìí]/g, 'i');
+    //text = text.replace(/[àá]/g, 'a');
+    //text = text.replace(/[úù]/g, 'u');
+    let texti = text.replace(/[.!?]/g, '.!');
+    let textArray = texti.split("!");
 
 
-
-    synthesizeSpeechSlo(text, {
+    synthesizeSpeechSlo(textArray, {
       options,
       filenameSlo,
     });
 
+    return;
     return synthesizeSpeech(text, {
       options,
       filename,
     });
+    
   }
 
   ttsExists(songId?: any, options?: any) {
     let filename;
     if (options?.language) {
-      filename = `assets/song_${songId}_${options.language}.mp3`;
+      filename = `assets/song_${songId}_${options.language}.wav`;
     } else {
-      filename = `assets/song_${songId}.mp3`;
+      filename = `assets/slo/ziga/song_${songId}.wav`;
     }
 
     const fp = path.join(process.cwd(), filename);
@@ -202,7 +205,10 @@ export class SongsService {
   async createTtsForAll(){
     let songs = await this.findAll();
     for (let song of songs){
-      this.tts((song as any)._id);
+      if(!this.ttsExists((song as any)._id)){
+        await this.tts((song as any)._id);
+        await new Promise(resolve => setTimeout(resolve, 3000));
+      }
     }
   }
 
