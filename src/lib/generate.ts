@@ -12,8 +12,6 @@ class Generator {
     A: string;
     B: string;
   }) {
-    logger = new Logger('generate lib');
-
     try {
       await axios.post('http://pesmomat-generate/generate_poem', {
         poem1_title: '',
