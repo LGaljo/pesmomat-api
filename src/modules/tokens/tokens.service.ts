@@ -1,13 +1,18 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger, OnModuleInit } from "@nestjs/common";
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Token, TokenDocument } from './tokens.schema';
 import { Gpio } from 'onoff';
+import { StatsService } from '../stats/stats.service';
 
 @Injectable()
 export class TokensService implements OnModuleInit {
+  private readonly logger = new Logger(TokensService.name);
+
   constructor(
     @InjectModel(Token.name) private tokensModel: Model<TokenDocument>,
+    @Inject(forwardRef(() => StatsService))
+    private readonly statsService: StatsService,
   ) {}
 
   async set(value: number): Promise<any> {
@@ -18,12 +23,9 @@ export class TokensService implements OnModuleInit {
     } else {
       await this.tokensModel.create({ amount: value });
     }
+    await this.statsService.createOnTokenChange(value);
 
     return this.getValue();
-  }
-
-  async setOne(): Promise<TokenDocument> {
-    return await this.set(1);
   }
 
   async getValue(): Promise<any> {
@@ -38,7 +40,7 @@ export class TokensService implements OnModuleInit {
 
   async setWatch(): Promise<any> {
     if (!Gpio.accessible) {
-      console.log('Gpio not available');
+      this.logger.debug('GPIO not available');
       return;
     }
 
@@ -49,7 +51,7 @@ export class TokensService implements OnModuleInit {
         console.error(err);
       }
       console.log(value);
-      await this.setOne();
+      await this.set(1);
     });
   }
 

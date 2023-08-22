@@ -4,6 +4,7 @@ import { SongsService } from '../songs/songs.service';
 import { printThermalPrinter } from '../../lib/print';
 import { TokensService } from '../tokens/tokens.service';
 import { ObjectId } from 'mongodb';
+import { StatsService } from '../stats/stats.service';
 
 @Injectable()
 export class RaspberrypiService {
@@ -12,6 +13,7 @@ export class RaspberrypiService {
   constructor(
     private songsService: SongsService,
     private tokensService: TokensService,
+    private statsService: StatsService,
   ) {}
 
   async printSong(context: Context, songId: string): Promise<any> {
@@ -35,6 +37,9 @@ export class RaspberrypiService {
 
     // Print PDF
     await printThermalPrinter(song);
+
+    await this.statsService.createOnPrinted((song as any)?._id);
+
     console.log('Now printing!');
     return { message: 'Printing' };
   }
