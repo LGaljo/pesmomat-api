@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { MongoClient } from 'mongodb';
 import { env } from '../../config/env';
@@ -6,6 +6,7 @@ import { SongsService } from './songs.service';
 
 @Injectable()
 export class SyncService implements OnModuleInit {
+  private readonly logger = new Logger(SyncService.name);
   constructor(private readonly songsService: SongsService) {}
 
   async onModuleInit() {
@@ -17,9 +18,9 @@ export class SyncService implements OnModuleInit {
   @Cron('0 */30 * * * *')
   async handleCron() {
     if (env.SYNC_ENABLED) {
-      console.log('Start job ' + new Date().toISOString());
+      this.logger.log('Start job ' + new Date().toISOString());
       await this.runImport();
-      console.log('Job completed ' + new Date().toISOString());
+      this.logger.log('Job completed ' + new Date().toISOString());
     }
   }
 
@@ -33,7 +34,7 @@ export class SyncService implements OnModuleInit {
       const sids = new Set();
       for (const tName of ['categories', 'authors', 'songs']) {
         const docs = await remote.db().collection(tName).find({}).toArray();
-        console.log(`Found ${docs.length} ${tName} to sync`);
+        this.logger.log(`Found ${docs.length} ${tName} to sync`);
 
         for (const doc of docs) {
           if (tName === 'songs') {
@@ -44,13 +45,13 @@ export class SyncService implements OnModuleInit {
 
             // Has content changed?
             if (!prev || doc?.content !== prev?.content) {
-              console.log('Song new or updated - recreating');
+              this.logger.debug('Song new or updated - recreating');
               sids.add(doc?._id);
             }
 
             // Does media file exists?
             if (!this.songsService.ttsExists(doc?._id)) {
-              console.log('MP3 does not exists - recreating');
+              this.logger.debug('MP3 does not exists - recreating');
               sids.add(doc?._id);
             }
           }

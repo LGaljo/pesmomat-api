@@ -14,10 +14,11 @@ import { SongsModule } from './modules/songs/songs.module';
 import { TokensModule } from './modules/tokens/tokens.module';
 import { AuthorModule } from './modules/author/author.module';
 import { CategoriesModule } from './modules/categories/categories.module';
-import { SongViewsModule } from './modules/songViews/songViews.module';
+import { StatsModule } from './modules/stats/stats.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import { GenerateModule } from './modules/generate/generate.module';
 
 @Module({
   imports: [
@@ -34,7 +35,8 @@ import { JwtModule } from '@nestjs/jwt';
     TokensModule,
     AuthorModule,
     CategoriesModule,
-    SongViewsModule,
+    StatsModule,
+    GenerateModule,
   ],
   controllers: [AppController],
 })
