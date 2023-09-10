@@ -5,6 +5,7 @@ export interface Env {
   API_HOST: string;
   API_URL: string;
   APP_URL: string;
+  GENERATOR_API: string;
   MONGO_URI: string;
   MONGO2_URI: string;
   JWT_SECRET: string;
@@ -28,6 +29,7 @@ export const env: Env = {
   API_HOST: process.env['API_HOST'],
   API_URL: process.env['API_URL'],
   APP_URL: process.env['APP_URL'],
+  GENERATOR_API: process.env['GENERATOR_API'],
   ON_RPI: Boolean(process.env['ON_RPI']),
   MONGO_URI: process.env['MONGO_URI'],
   MONGO2_URI: process.env['MONGO2_URI'],

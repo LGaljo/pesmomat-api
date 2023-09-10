@@ -3,6 +3,7 @@ import { Category } from '../categories/category.schema';
 import { Author } from '../author/author.schema';
 import { ObjectId } from 'mongodb';
 
+// db.getCollection('songs').createIndex({ngrams: "text"})
 export type SongDocument = Song & Document;
 
 @Schema()
