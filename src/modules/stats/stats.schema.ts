@@ -37,6 +37,9 @@ export class Stats {
 
   @Prop()
   tokens: number;
+
+  @Prop()
+  machine: string;
 }
 
 export const StatsSchema = SchemaFactory.createForClass(Stats);

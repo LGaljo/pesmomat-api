@@ -19,6 +19,7 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { GenerateModule } from './modules/generate/generate.module';
+import { SyncModule } from './modules/sync/sync.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { GenerateModule } from './modules/generate/generate.module';
     CategoriesModule,
     StatsModule,
     GenerateModule,
+    SyncModule,
   ],
   controllers: [AppController],
 })

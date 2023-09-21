@@ -1,10 +1,10 @@
-import { Module } from '@nestjs/common';
-import { SongsService } from './songs.service';
-import { SongsController } from './songs.controller';
+import { forwardRef, Module } from '@nestjs/common';
+import { SyncService } from './sync.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Song, SongsSchema } from './songs.schema';
+import { Song, SongsSchema } from '../songs/songs.schema';
 import { CategoriesSchema, Category } from '../categories/category.schema';
 import { Author, AuthorSchema } from '../author/author.schema';
+import { SongsModule } from '../songs/songs.module';
 
 @Module({
   imports: [
@@ -13,9 +13,9 @@ import { Author, AuthorSchema } from '../author/author.schema';
       { name: Category.name, schema: CategoriesSchema },
       { name: Author.name, schema: AuthorSchema },
     ]),
+    forwardRef(() => SongsModule),
   ],
-  providers: [SongsService],
-  controllers: [SongsController],
-  exports: [SongsService],
+  providers: [SyncService],
+  exports: [SyncService],
 })
-export class SongsModule {}
+export class SyncModule {}
