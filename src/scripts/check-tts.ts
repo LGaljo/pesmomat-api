@@ -12,7 +12,7 @@ let app: INestApplicationContext;
   const errors = [];
 
   const songs = await songsService.findAll();
-  const checked = songs.filter((song) => {
+  const checked = songs.items.filter((song) => {
     const fp = path.join(process.cwd(), `assets/song_${(song as any)._id}.mp3`);
 
     if (fs.existsSync(fp)) {
