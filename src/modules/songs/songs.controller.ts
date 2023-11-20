@@ -32,7 +32,7 @@ export class SongsController {
     const { query } = request;
 
     const limit = Number(query?.limit) || 25;
-    const page = Number(query?.page) - 1 || null;
+    const page = Number(query?.page) - 1 || 0;
 
     return this.songsService.findAll(limit, page, request?.query);
   }
@@ -69,6 +69,7 @@ export class SongsController {
     return this.songsService.manageFavourites(params?.id);
   }
 
+  @Get('play/:lang/:id')
   @Get('play/:id')
   public async getSongFile(
     @Req() request: IRequest,
@@ -76,11 +77,8 @@ export class SongsController {
   ): Promise<StreamableFile> {
     const { params } = request;
 
-    if (!fs.existsSync(path.join(process.cwd(), `assets`))) {
-      fs.mkdirSync('assets');
-    }
-
-    const fp = path.join(process.cwd(), `assets/song_${params.id}.mp3`);
+    const lang = params?.lang ?? 'sl';
+    const fp = path.join(process.cwd(), `assets/song_${params.id}_${lang}.mp3`);
     if (!fs.existsSync(fp)) {
       console.log('Create tts sample');
       if (await this.songsService.exists(params.id)) {

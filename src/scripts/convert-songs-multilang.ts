@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { SongsService } from '../modules/songs/songs.service';
 import { AppModule } from '../app.module';
 import { INestApplicationContext } from '@nestjs/common';
+import * as path from 'path';
+import * as fs from 'fs';
 
 let app: INestApplicationContext;
 (async () => {
@@ -17,15 +19,33 @@ let app: INestApplicationContext;
       song.contents.push({
         content: song?.content,
         title: song?.title,
-        lang: ['slovenščina', 'Slovenščina'].includes(song?.language)
+        lang: ['sl', 'slovenščina', 'Slovenščina'].includes(song?.language)
           ? 'sl'
           : 'other',
       });
     }
-    song.language = ['slovenščina', 'Slovenščina'].includes(song?.language)
+    song.language = ['sl', 'slovenščina', 'Slovenščina'].includes(
+      song?.language,
+    )
       ? 'sl'
       : 'other';
     await song.save();
+
+    // Rename song tts sample
+    const fpo = path.join(
+      process.cwd(),
+      `assets/song_${(song as any)._id}.mp3`,
+    );
+    const fpn = path.join(
+      process.cwd(),
+      `assets/song_${(song as any)._id}_${song.language}.mp3`,
+    );
+
+    if (fs.existsSync(fpo)) {
+      fs.renameSync(fpo, fpn);
+    } else {
+      console.log(`File ${fpo} does not exit`);
+    }
 
     console.log(`Done ${i}/${songs?.total}`);
     i += 1;
