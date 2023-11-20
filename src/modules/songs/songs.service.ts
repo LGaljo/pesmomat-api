@@ -30,7 +30,7 @@ export class SongsService {
         _id: new ObjectId(object?.category),
       });
     }
-    object.ngrams = toNgrams(object.title);
+    object.ngrams = this.songToNgrams(object);
     await createdSong.save();
     return createdSong;
   }
@@ -140,6 +140,7 @@ export class SongsService {
         _id: new ObjectId(data?.categoryId),
       });
     }
+    object.ngrams = this.songToNgrams(object);
     object.updatedAt = new Date();
 
     await object.save();
@@ -195,5 +196,17 @@ export class SongsService {
     const fp = path.join(process.cwd(), filename);
 
     return fs.existsSync(fp) && fs.statSync(fp)?.size > 0;
+  }
+
+  private songToNgrams(song: any) {
+    return [
+      toNgrams(song.title),
+      toNgrams([song?.author?.firstName, song?.author?.lastName].join(' ')),
+      song.contents
+        .map((content: string) => {
+          toNgrams(content);
+        })
+        .join(' '),
+    ].join(' ');
   }
 }

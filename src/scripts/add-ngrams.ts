@@ -25,10 +25,10 @@ let app: INestApplicationContext;
           toNgrams(content);
         })
         .join(' '),
-    ];
+    ].join(' ');
     await song.save();
 
-    console.log(`Done s${i}/${songs?.total}`);
+    console.log(`Done ${i}/${songs?.total}`);
     i += 1;
   }
 
