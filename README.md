@@ -61,7 +61,11 @@ AZURE_API_KEY=<API_KEY>
 ```bash
 $ npm i
 # If you get some errors about printer package, use this to use prebuilt
+# First uninstall printer package
+$ npm uninstall printer
 $ npm install printer --target_arch=x64
+# Or build it from source
+$ npm install printer --build-from-source=node_printer --update-binary --force
 
 ```
 

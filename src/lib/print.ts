@@ -15,14 +15,14 @@ export async function printThermalPrinter(song: Song) {
     driver: require('printer'),
   });
 
-  console.log(prt.getPrinters());
-  console.log(prt.getPrinter(env.PRINTER_NAME));
+  // console.log(prt.getPrinters());
+  // console.log(prt.getPrinter(env.PRINTER_NAME));
 
   if (!(await printer.isPrinterConnected())) {
     throw new Error('Printer is not connected');
   }
 
-  printer.add(Buffer.from([0x1d, 0x7c, 0x06]));
+  printer.add(Buffer.from([0x1d, 0x7c, 0x06])); // Increase print density
   printer.setTypeFontB();
   printer.bold(true);
   printer.println(song.title);

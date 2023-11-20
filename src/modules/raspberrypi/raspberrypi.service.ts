@@ -36,11 +36,11 @@ export class RaspberrypiService {
     // await this.tokensService.set(-1);
 
     // Print PDF
+    console.log('Now printing!');
     await printThermalPrinter(song);
 
     await this.statsService.createOnPrinted((song as any)?._id);
 
-    console.log('Now printing!');
     return { message: 'Printing' };
   }
 }
