@@ -7,6 +7,8 @@ COPY --chown=node:node . .
 
 RUN apt update && apt install build-essential python3 libcups2-dev -y
 
+RUN npm npm install printer --build-from-source=node_printer --update-binary --force
+
 RUN npm ci
 
 RUN npm run build
