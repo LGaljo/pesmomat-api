@@ -4,7 +4,6 @@ import {
   printer as ThermalPrinter,
   types as PrinterTypes,
 } from 'node-thermal-printer';
-import * as prt from '@damonsmith/node-printer';
 import { env } from '../config/env';
 
 export async function printThermalPrinter(song: Song) {
@@ -23,7 +22,7 @@ export async function printThermalPrinter(song: Song) {
   }
 
   printer.add(Buffer.from([0x1d, 0x7c, 0x07])); // Increase print density
-  printer.add(Buffer.from([0x1d, 0x4c, 0x01, 0x01])); // Left margin
+  // printer.add(Buffer.from([0x1d, 0x4c, 0x01, 0x01])); // Left margin
   printer.setTypeFontB();
   printer.bold(true);
   printer.println(song.title);
@@ -43,8 +42,8 @@ export async function printThermalPrinter(song: Song) {
 
   try {
     await printer.execute();
-    console.error('Print done!');
+    console.log('Print done!');
   } catch (error) {
-    console.log('Print failed:', error);
+    console.error('Print failed:', error);
   }
 }
