@@ -5,9 +5,9 @@ WORKDIR /app
 
 COPY --chown=node:node . .
 
-RUN apt update && apt install build-essential python2 python3 libcups2-dev -y
+RUN apt update && apt install build-essential python3 libcups2-dev -y
 
-RUN npm install printer --build-from-source=node_printer --update-binary --force
+RUN npm install printer --target_arch=x64 --target_platform=linux
 
 RUN npm ci
 
