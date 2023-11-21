@@ -18,11 +18,10 @@ export class SyncService implements OnModuleInit {
   @Cron('0 */30 * * * *')
   async handleCron(override: boolean) {
     if (env.SYNC_ENABLED || override) {
-      let amount = 0;
       this.logger.log('Start job ' + new Date().toISOString());
-      // await this.runImport();
+      let amount = await this.runImport();
       amount += await this.syncStats();
-      // await this.saveLastRun(amount);
+      await this.saveLastRun(amount);
       this.logger.log('Job completed ' + new Date().toISOString());
     }
   }
@@ -43,21 +42,36 @@ export class SyncService implements OnModuleInit {
 
         for (const doc of docs) {
           if (tName === 'songs') {
-            const prev = await client
+            const prevDoc = await client
               .db()
               .collection('songs')
               .findOne({ _id: doc._id });
 
-            // Has content changed?
-            if (!prev || doc?.content !== prev?.content) {
-              this.logger.debug('Song new or updated - recreating');
-              sids.add(doc?._id);
-            }
+            for (const content of doc.contents) {
+              // Has content changed?
+              const prev = prevDoc.contents.find(
+                (d: any) => d.lang === content.lang,
+              );
+              if (!prev || content?.content !== prev?.content) {
+                this.logger.debug('Song new or updated - recreating');
+                sids.add({
+                  id: doc?._id.toHexString(),
+                  lang: content?.lang,
+                });
+              }
 
-            // Does media file exists?
-            if (!this.songsService.ttsExists(doc?._id)) {
-              this.logger.debug('MP3 does not exists - recreating');
-              sids.add(doc?._id);
+              // Does media file exists?
+              if (
+                !this.songsService.ttsExists(doc?._id.toHexString(), {
+                  language: content?.lang,
+                })
+              ) {
+                this.logger.debug('MP3 does not exists - recreating');
+                sids.add({
+                  id: doc?._id.toHexString(),
+                  lang: content?.lang,
+                });
+              }
             }
           }
           await client
@@ -65,11 +79,15 @@ export class SyncService implements OnModuleInit {
             .collection(tName)
             .updateOne({ _id: doc._id }, { $set: doc }, { upsert: true });
         }
+
+        this.logger.log(`Syncing ${tName} finished`);
       }
 
       const promises = [];
       for (const sid of sids) {
-        promises.push(this.songsService.tts(sid, null));
+        promises.push(
+          this.songsService.tts((sid as any)?._id, (sid as any)?.lang),
+        );
       }
 
       await Promise.all(promises);
@@ -78,6 +96,7 @@ export class SyncService implements OnModuleInit {
     } finally {
       await remote.close();
     }
+
     return amount;
   }
 
@@ -85,6 +104,8 @@ export class SyncService implements OnModuleInit {
     const client = new MongoClient(env.MONGO_URI);
     const remote = new MongoClient(env.MONGO2_URI);
     let amount = 0;
+
+    this.logger.log('Start syncing stats');
 
     try {
       await client.connect();
@@ -106,13 +127,16 @@ export class SyncService implements OnModuleInit {
 
       amount += stats.length;
 
-      await remote.db().collection('stats').insertMany(stats);
-
-      console.log(stats);
+      if (stats.length) {
+        await remote.db().collection('stats').insertMany(stats);
+      } else {
+        this.logger.log('No stats to sync');
+      }
     } catch (e) {
       console.error(e);
     } finally {
       await remote.close();
+      this.logger.log('Finish syncing stats');
     }
     return amount;
   }

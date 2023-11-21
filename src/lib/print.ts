@@ -22,7 +22,7 @@ export async function printThermalPrinter(song: Song) {
     throw new Error('Printer is not connected');
   }
 
-  printer.add(Buffer.from([0x1d, 0x7c, 0x06])); // Increase print density
+  printer.add(Buffer.from([0x1d, 0x7c, 0x07])); // Increase print density
   printer.setTypeFontB();
   printer.bold(true);
   printer.println(song.title);
